@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { validateBooking } from "@/lib/validate-booking";
 import { buildInstallmentPlan } from "@/lib/installments";
 import { getStripe, hasLiveStripeKeys } from "@/lib/stripe";
-import { SITE_URL } from "@/lib/site";
+import { originFromRequest } from "@/lib/site";
 import { RETREAT } from "@/lib/retreat";
 import { formatEur } from "@/lib/format";
 import type { BookingPayload } from "@/lib/booking";
@@ -27,8 +27,9 @@ export async function POST(request: Request) {
       : "Solo"
     : "Workshops only";
   const productName = `${RETREAT.name} — ${pkg.title}${booking.occupancy ? ` (${occupancyLabel})` : ""}`;
-  const successUrl = `${SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
-  const cancelUrl = `${SITE_URL}/book/${pkg.slug}?checkout=cancelled`;
+  const origin = originFromRequest(request);
+  const successUrl = `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${origin}/book/${pkg.slug}?checkout=cancelled`;
 
   const metadata = {
     packageSlug: pkg.slug,
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
       }),
     ).toString("base64url");
     return NextResponse.json({
-      url: `${SITE_URL}/checkout/mock?token=${token}`,
+      url: `${origin}/checkout/mock?token=${token}`,
       mode: "mock",
     });
   }
