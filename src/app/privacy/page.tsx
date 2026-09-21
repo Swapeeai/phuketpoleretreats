@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { CONTACT_EMAIL } from "@/lib/site";
+import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy policy",
   description:
-    "How Phuket Pole Retreats collects and uses booking, payment and website information. Payments are processed by Stripe; we do not store card numbers.",
-  alternates: { canonical: "/privacy" },
-};
+    "How Phuket Pole Retreats collects and uses booking, payment and website information for the Phuket pole camp. Payments are processed by Stripe; we do not store card numbers.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4 py-12 text-sm leading-relaxed sm:px-6">
+      <Breadcrumbs
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Privacy", path: "/privacy" },
+        ]}
+      />
       <h1 className="text-4xl">Privacy policy</h1>
       <p className="text-muted-foreground">Last updated: 10 November 2025 (aligned with the live site).</p>
       <p>
@@ -22,7 +30,7 @@ export default function PrivacyPage() {
       <ul className="list-disc space-y-2 pl-5">
         <li>
           Personal information when you book or contact us: name, email, phone, Instagram handle,
-          training level, and roommate notes.
+          training level, roommate notes, and WhatsApp messages you send about the retreat.
         </li>
         <li>
           Payment information is collected by Stripe. We do not store card numbers on our servers.
@@ -44,8 +52,12 @@ export default function PrivacyPage() {
       </p>
       <h2 className="text-2xl">Your rights</h2>
       <p>
-        You may ask to access, correct, or delete personal information, or stop marketing emails.
-        Contact {CONTACT_EMAIL}.
+        You may ask to access, correct, or delete personal information, or stop marketing messages.
+        Reach us via the{" "}
+        <Link href="/contact" className="underline underline-offset-4">
+          contact form
+        </Link>
+        , which opens WhatsApp.
       </p>
     </article>
   );

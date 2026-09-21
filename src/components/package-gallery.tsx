@@ -20,7 +20,7 @@ export function PackageGallery({ title, images }: { title: string; images: strin
       <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
         <Image
           src={current}
-          alt={`${title} at Ayara Kamala Resort & Spa`}
+          alt={`${title} at Ayara Kamala Resort & Spa — Phuket pole retreat package`}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"

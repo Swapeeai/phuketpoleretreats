@@ -1,23 +1,33 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { JsonLd } from "@/components/json-ld";
 import { buttonVariants } from "@/components/ui/button";
 import { LIVE } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
 import { PACKAGES } from "@/lib/retreat";
+import { eventJsonLd, pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Book the 2027 Phuket Pole Art Retreat",
+export const metadata: Metadata = pageMetadata({
+  title: "Book the Phuket pole retreat 2027",
   description:
-    "28th January - 1st February 2027 at Ayara Kamala Resort & Spa Phuket. Pay in full, or €500 deposit today and monthly payments after.",
-  alternates: { canonical: "/book" },
-};
+    "Book the Pole Art Retreat at Ayara Kamala — a pole camp and training week in Phuket, 28th January - 1st February 2027. Workshops only or hotel packages. Pay in full, or €500 deposit today and monthly payments after.",
+  path: "/book",
+});
 
 export default function BookIndexPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <p className="text-sm uppercase tracking-[0.18em] text-primary">{LIVE.heroDates}</p>
+      <JsonLd data={eventJsonLd()} />
+      <Breadcrumbs
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Book", path: "/book" },
+        ]}
+      />
+      <p className="mt-4 text-sm uppercase tracking-[0.18em] text-primary">{LIVE.heroDates}</p>
       <h1 className="mt-2 text-4xl sm:text-5xl">{LIVE.bookHeading}</h1>
       <p className="mt-4 max-w-2xl text-[#272727]">{LIVE.accommodationDatesLine}</p>
       <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#272727]">
@@ -41,7 +51,11 @@ export default function BookIndexPage() {
               const solo = pkg.variants.find((item) => item.occupancy === "solo");
               return (
                 <tr key={pkg.slug} className="border-t border-border">
-                  <td className="px-4 py-3">{pkg.title}</td>
+                  <td className="px-4 py-3">
+                    <Link href={`/book/${pkg.slug}`} className="hover:text-primary hover:underline">
+                      {pkg.title}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">{formatEur(shared.priceCents)}</td>
                   <td className="px-4 py-3">{solo ? formatEur(solo.priceCents) : "—"}</td>
                 </tr>
@@ -57,7 +71,7 @@ export default function BookIndexPage() {
             <div className="relative h-56">
               <Image
                 src={pkg.images[0]}
-                alt={pkg.title}
+                alt={`${pkg.title} at Ayara Kamala Resort & Spa for the Phuket pole retreat`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -84,6 +98,17 @@ export default function BookIndexPage() {
           </article>
         ))}
       </div>
+      <p className="mt-10 text-sm text-[#3e3e3e]">
+        Questions before you book?{" "}
+        <Link href="/contact" className="text-primary underline-offset-4 hover:underline">
+          Contact us on WhatsApp
+        </Link>{" "}
+        or read the{" "}
+        <Link href="/faqs" className="text-primary underline-offset-4 hover:underline">
+          FAQs
+        </Link>
+        .
+      </p>
     </div>
   );
 }

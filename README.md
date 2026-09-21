@@ -40,7 +40,15 @@ Packages, prices, instructors, dates, and policies match the live site (EUR).
 
 ## SEO
 
-Unique titles and meta descriptions for 2027 (the live Squarespace tags still mention April 2026), one H1 per page, Event/Offer JSON-LD, canonical URLs, Open Graph, `sitemap.xml`, `robots.txt`. Homepage copy is Tara’s live wording.
+Unique titles and meta descriptions for 2027, one H1 per page, semantic headings, Open Graph + Twitter cards, canonical URLs, JSON-LD (Organization, WebSite, Event/Offer, BreadcrumbList, FAQPage), `sitemap.xml`, `robots.txt`, and descriptive image alts. Keywords (pole retreat, pole camp, pole training week, intermediate / advanced / pro) sit in titles, descriptions, and alts — visible body copy stays Tara’s.
+
+## Contact & chat
+
+There is no public email address. The **Contact us** form (`/contact`) and the coral **How can I help you?** bubble both open WhatsApp with a prefilled message:
+
+- Number: **+66 92 832 0802** (`wa.me/66928320802`)
+- Phones: `https://wa.me/66928320802?text=...`
+- Desktop: `https://web.whatsapp.com/send?phone=66928320802&text=...`
 
 ## Scripts
 

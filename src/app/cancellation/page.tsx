@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { CONTACT_EMAIL } from "@/lib/site";
+import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Cancellation policy",
   description:
-    "Phuket Pole Retreats bookings are non-refundable. If we cancel, you may transfer to a future retreat. Raise issues during the stay with Tara and Jenny.",
-  alternates: { canonical: "/cancellation" },
-};
+    "Phuket Pole Retreats bookings are non-refundable. If we cancel the pole camp, you may transfer to a future retreat. Raise issues during the stay with Tara and Jenny.",
+  path: "/cancellation",
+});
 
 export default function CancellationPage() {
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4 py-12 text-sm leading-relaxed sm:px-6">
+      <Breadcrumbs
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Cancellation", path: "/cancellation" },
+        ]}
+      />
       <h1 className="text-4xl">Cancellation policy</h1>
       <p className="text-muted-foreground">Last updated: 10 November 2025 (aligned with the live site).</p>
       <p>
@@ -21,8 +29,11 @@ export default function CancellationPage() {
       <ul className="list-disc space-y-2 pl-5">
         <li>Bookings are non-refundable, including the €500 deposit and later monthly charges.</li>
         <li>
-          If you find someone to take your place, email us and we will change the information on
-          file.
+          If you find someone to take your place,{" "}
+          <Link href="/contact" className="underline underline-offset-4">
+            message us on WhatsApp
+          </Link>{" "}
+          and we will change the information on file.
         </li>
       </ul>
       <h2 className="text-2xl">Cancellation by Phuket Pole Retreats</h2>
@@ -37,9 +48,10 @@ export default function CancellationPage() {
       </p>
       <p>
         Questions:{" "}
-        <a className="underline" href={`mailto:${CONTACT_EMAIL}`}>
-          {CONTACT_EMAIL}
-        </a>
+        <Link href="/contact" className="underline underline-offset-4">
+          contact us on WhatsApp
+        </Link>
+        .
       </p>
     </article>
   );

@@ -4,14 +4,13 @@ import { SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const routes = ["", "/book", "/faqs", "/contact", "/privacy", "/cancellation"];
-  return [
-    ...routes.map((path) => ({
-      url: `${SITE_URL}${path || "/"}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: path === "" ? 1 : 0.8,
-    })),
+  const pages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE_URL}/book`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${SITE_URL}/faqs`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/cancellation`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
     ...PACKAGES.map((pkg) => ({
       url: `${SITE_URL}/book/${pkg.slug}`,
       lastModified: now,
@@ -19,4 +18,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     })),
   ];
+  return pages;
 }

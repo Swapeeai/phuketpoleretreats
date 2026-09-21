@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { EventJsonLd } from "@/components/event-json-ld";
+import { FaqList } from "@/components/faq-list";
 import { HeroVideo } from "@/components/hero-video";
+import { JsonLd } from "@/components/json-ld";
 import { buttonVariants } from "@/components/ui/button";
 import { LIVE, LIVE_PACKAGE_BLURB, LIVE_PACKAGE_ORDER } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
-import { IMG, INSTRUCTORS, PACKAGES } from "@/lib/retreat";
+import { FAQS, IMG, INSTRUCTORS, PACKAGES } from "@/lib/retreat";
+import { eventJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 function HighlightedLead({ text, highlight }: { text: string; highlight: string }) {
@@ -27,7 +29,7 @@ export default function HomePage() {
 
   return (
     <>
-      <EventJsonLd />
+      <JsonLd data={eventJsonLd()} />
       <section className="relative isolate min-h-[100svh] w-full overflow-hidden bg-black">
         <HeroVideo />
         <div className="absolute inset-0 bg-black/30" />
@@ -58,7 +60,7 @@ export default function HomePage() {
                 <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                   <Image
                     src={instructor.image}
-                    alt={instructor.name}
+                    alt={`${instructor.name}, instructor at the Phuket Pole Art Retreat`}
                     fill
                     sizes="(max-width: 640px) 100vw, 176px"
                     className="object-cover"
@@ -84,8 +86,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-[#fafafa] py-20">
+      <section className="border-y border-border bg-[#fafafa] py-20" aria-labelledby="pole-art-heading">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <h2 id="pole-art-heading" className="sr-only">
+            The Pole Art Retreat
+          </h2>
           <p className="text-lg leading-relaxed sm:text-xl">
             <HighlightedLead text={LIVE.uniqueExperience} highlight={LIVE.uniqueHighlight} />
           </p>
@@ -116,7 +121,7 @@ export default function HomePage() {
               <div className="relative h-56">
                 <Image
                   src={pkg.images[0]}
-                  alt={pkg.title}
+                  alt={`${pkg.title} at Ayara Kamala — Phuket pole retreat accommodation`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
@@ -145,7 +150,7 @@ export default function HomePage() {
           <div className="relative min-h-80 overflow-hidden">
             <Image
               src={IMG.aerialHotel}
-              alt="Aerial view of Ayara Kamala Resort & Spa in Phuket"
+              alt="Aerial view of Ayara Kamala Resort & Spa in Kamala, Phuket, home of the pole camp"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -173,7 +178,7 @@ export default function HomePage() {
           <div className="relative min-h-80 overflow-hidden">
             <Image
               src={IMG.studio}
-              alt="Air-conditioned pole studio at Ayara Kamala Phuket"
+              alt="Air-conditioned pole studio with floor-to-ceiling poles at Ayara Kamala Phuket"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -188,13 +193,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
+      <section id="faqs" className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
+        <h2 className="text-4xl sm:text-5xl">Frequently asked questions</h2>
+        <p className="mt-4 text-base leading-relaxed text-[#272727]">
+          Intermediate, advanced and pro polers — rooms, meals, and how to book this pole training
+          week.{" "}
+          <Link href="/faqs" className="text-primary underline-offset-4 hover:underline">
+            Open the full FAQ page
+          </Link>
+          .
+        </p>
+        <FaqList faqs={FAQS} />
+      </section>
+
+      <section className="mx-auto max-w-3xl px-4 pb-16 text-center sm:px-6">
         <p className="text-base leading-relaxed text-[#272727]">{LIVE.contactLine}</p>
         <Link
           href="/contact"
           className={cn(buttonVariants({ variant: "outline", size: "lg" }), "mt-8 h-12 rounded-full px-8")}
         >
-          WhatsApp
+          Contact us
         </Link>
       </section>
     </>
@@ -204,7 +222,7 @@ export default function HomePage() {
 function LevelCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="border border-border bg-white p-7">
-      <p className="font-heading text-2xl">{title}</p>
+      <h3 className="font-heading text-2xl">{title}</h3>
       <p className="mt-4 text-sm leading-relaxed text-[#272727]">{body}</p>
     </div>
   );

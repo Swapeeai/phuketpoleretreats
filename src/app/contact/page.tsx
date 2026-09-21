@@ -1,40 +1,35 @@
 import type { Metadata } from "next";
-import { buttonVariants } from "@/components/ui/button";
-import { CONTACT_EMAIL, WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { ContactForm } from "@/components/contact-form";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { LIVE } from "@/lib/live-copy";
+import { pageMetadata } from "@/lib/seo";
+import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  title: "Contact Tara & Jenny",
+export const metadata: Metadata = pageMetadata({
+  title: "Contact us about the Phuket pole retreat",
   description:
-    "Questions about the Phuket Pole Art Retreat 2027 or booking? Email info@ibizapoleretreats.com or WhatsApp +66 92 832 0802.",
-  alternates: { canonical: "/contact" },
-};
+    "Message Tara and Jenny on WhatsApp about the Phuket Pole Art Retreat — a pole camp and training week at Ayara Kamala, 28th January - 1st of February 2027. Ask about packages, levels, or booking.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="text-4xl sm:text-5xl">Contact us</h1>
-      <p className="mt-4 text-muted-foreground">
-        If you have questions about the retreat or the booking process, email or message us on
-        WhatsApp. Organisers Tara and Jenny both see enquiries.
+      <Breadcrumbs
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ]}
+      />
+      <h1 className="mt-4 text-4xl sm:text-5xl">Contact us</h1>
+      <p className="mt-4 text-base leading-relaxed text-[#272727]">{LIVE.contactLine}</p>
+      <p className="mt-3 text-sm text-[#3e3e3e]">
+        Send a note about the pole training week and we’ll open WhatsApp ({WHATSAPP_DISPLAY}) with
+        your message ready for Tara and Jenny.
       </p>
-      <div className="mt-8 space-y-4 rounded-2xl border border-border bg-card p-6">
-        <p>
-          Email{" "}
-          <a className="underline underline-offset-4" href={`mailto:${CONTACT_EMAIL}`}>
-            {CONTACT_EMAIL}
-          </a>
-        </p>
-        <p>
-          WhatsApp{" "}
-          <a className="underline underline-offset-4" href={WHATSAPP_URL}>
-            {WHATSAPP_DISPLAY}
-          </a>
-        </p>
+      <div className="mt-8 border border-border bg-white p-6">
+        <ContactForm />
       </div>
-      <a href={WHATSAPP_URL} className={cn(buttonVariants({ size: "lg" }), "mt-8 inline-flex h-11")}>
-        Message on WhatsApp
-      </a>
     </div>
   );
 }

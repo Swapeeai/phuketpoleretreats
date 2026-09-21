@@ -123,7 +123,7 @@ export const PACKAGES: RetreatPackage[] = [
     nights: 6,
     includesHotel: true,
     description:
-      "Workshops plus six nights in an 80sqm Grand Thai Natural ocean-view room with spa bath. This room can sleep three — email us if you would like to share between three.",
+      "Workshops plus six nights in an 80sqm Grand Thai Natural ocean-view room with spa bath. This room can sleep three — message us on WhatsApp if you would like to share between three.",
     highlights: [
       "12 hours of workshops",
       "Welcome dinner",
@@ -144,7 +144,7 @@ export const PACKAGES: RetreatPackage[] = [
       { occupancy: "solo", priceCents: 210_000, sku: "SQ1174626" },
     ],
     notes: [
-      "This room can fit three guests. Email us if you would like to share between three.",
+      "This room can fit three guests. Message us on WhatsApp if you would like to share between three.",
     ],
   },
   {
@@ -271,7 +271,7 @@ export const FAQS = [
   },
   {
     q: "What accommodation is included?",
-    a: "Workshop + hotel packages stay at Ayara Kamala Resort & Spa, where the studio is. Shared rooms and private (solo) suites are available, some with pool access or private pools. Workshops-only means you organise your own hotel. If you book shared and are coming solo, we can match you with another guest — email us.",
+    a: "Workshop + hotel packages stay at Ayara Kamala Resort & Spa, where the studio is. Shared rooms and private (solo) suites are available, some with pool access or private pools. Workshops-only means you organise your own hotel. If you book shared and are coming solo, we can match you with another guest — message us on WhatsApp.",
   },
   {
     q: "Is transport included?",

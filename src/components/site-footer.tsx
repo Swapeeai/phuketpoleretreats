@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { INSTAGRAM_URL } from "@/lib/site";
 import { LIVE } from "@/lib/live-copy";
-import { CONTACT_EMAIL, INSTAGRAM_URL, WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/site";
+import { WHATSAPP_ME } from "@/lib/whatsapp";
+import Link from "next/link";
 
 export function SiteFooter() {
   return (
@@ -9,21 +10,23 @@ export function SiteFooter() {
         <div>
           <p className="font-heading text-2xl">{LIVE.siteName}</p>
           <p className="mt-2 text-sm text-white/70">
+            Pole Art Retreat · pole camp & training week in Phuket
+            <br />
             {LIVE.heroDates}
             <br />
-            Ayara Kamala Resort & Spa, Phuket
+            Ayara Kamala Resort & Spa, Kamala
           </p>
         </div>
         <div className="text-sm">
           <p className="font-medium">Talk to Tara & Jenny</p>
           <p className="mt-2">
-            <a className="underline-offset-4 hover:underline" href={`mailto:${CONTACT_EMAIL}`}>
-              {CONTACT_EMAIL}
-            </a>
+            <Link className="underline-offset-4 hover:underline" href="/contact">
+              Contact us on WhatsApp
+            </Link>
           </p>
           <p className="mt-1">
-            <a className="underline-offset-4 hover:underline" href={WHATSAPP_URL}>
-              WhatsApp {WHATSAPP_DISPLAY}
+            <a className="underline-offset-4 hover:underline" href={WHATSAPP_ME}>
+              Open WhatsApp
             </a>
           </p>
           <p className="mt-1">
@@ -38,6 +41,9 @@ export function SiteFooter() {
           </Link>
           <Link className="hover:underline" href="/faqs">
             FAQs
+          </Link>
+          <Link className="hover:underline" href="/contact">
+            Contact
           </Link>
           <Link className="hover:underline" href="/privacy">
             Privacy policy

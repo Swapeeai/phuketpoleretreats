@@ -28,7 +28,7 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-3">
           <Image
             src={IMG.logo}
-            alt="Phuket Pole Retreats"
+            alt="Phuket Pole Retreats logo — pole camp in Kamala, Phuket"
             width={44}
             height={44}
             className="size-11 rounded-full object-cover"
