@@ -2,11 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaqList } from "@/components/faq-list";
 import { HeroVideo } from "@/components/hero-video";
+import { InstagramGallery } from "@/components/instagram-gallery";
 import { JsonLd } from "@/components/json-ld";
+import { ScenicBand, ScenicSection } from "@/components/scenic";
 import { buttonVariants } from "@/components/ui/button";
 import { LIVE, LIVE_PACKAGE_BLURB, LIVE_PACKAGE_ORDER } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
-import { FAQS, IMG, INSTRUCTORS, PACKAGES } from "@/lib/retreat";
+import { SCENERY, VENUE } from "@/lib/images";
+import { FAQS, INSTRUCTORS, PACKAGES } from "@/lib/retreat";
 import { eventJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +53,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="instructors" className="bg-white py-20">
+      <ScenicBand src={SCENERY.kamalaBeach.src} alt={SCENERY.kamalaBeach.alt} />
+
+      <section id="instructors" className="bg-sand py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="text-center text-4xl sm:text-5xl">Instructors</h2>
           <p className="mt-3 text-center text-muted-foreground">{LIVE.heroInstructors}</p>
@@ -86,16 +91,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-[#fafafa] py-20" aria-labelledby="pole-art-heading">
+      <ScenicSection src={SCENERY.thailandJungle.src} alt={SCENERY.thailandJungle.alt} overlayClassName="bg-jungle/78">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <h2 id="pole-art-heading" className="sr-only">
             The Pole Art Retreat
           </h2>
-          <p className="text-lg leading-relaxed sm:text-xl">
+          <p className="text-lg leading-relaxed text-white sm:text-xl">
             <HighlightedLead text={LIVE.uniqueExperience} highlight={LIVE.uniqueHighlight} />
           </p>
-          <p className="mt-6 text-base leading-relaxed text-[#272727] sm:text-lg">{LIVE.notPushing}</p>
-          <p className="mt-6 text-base leading-relaxed text-[#272727] sm:text-lg">{LIVE.moreThanCamp}</p>
+          <p className="mt-6 text-base leading-relaxed text-white/90 sm:text-lg">{LIVE.notPushing}</p>
+          <p className="mt-6 text-base leading-relaxed text-white/90 sm:text-lg">{LIVE.moreThanCamp}</p>
         </div>
         <div className="mx-auto mt-14 grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-3">
           <LevelCard title={LIVE.intermediateTitle} body={LIVE.intermediate} />
@@ -103,7 +108,7 @@ export default function HomePage() {
           <LevelCard title={LIVE.proTitle} body={`${LIVE.pro} ${LIVE.proClose}`} />
         </div>
         <div className="mt-12 text-center">
-          <p className="font-heading text-2xl sm:text-3xl">{LIVE.bookYourSpot}</p>
+          <p className="font-heading text-2xl text-white sm:text-3xl">{LIVE.bookYourSpot}</p>
           <Link
             href="/book"
             className={cn(buttonVariants({ size: "lg" }), "mt-6 h-12 rounded-full px-8 uppercase tracking-[0.16em]")}
@@ -111,13 +116,13 @@ export default function HomePage() {
             {LIVE.bookNow}
           </Link>
         </div>
-      </section>
+      </ScenicSection>
 
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <h2 className="text-4xl sm:text-5xl">Packages</h2>
         <div className="mt-10 grid gap-8 md:grid-cols-2">
           {packages.map((pkg) => (
-            <article key={pkg.slug} className="overflow-hidden border border-border bg-white">
+            <article key={pkg.slug} className="overflow-hidden border border-border bg-card">
               <div className="relative h-56">
                 <Image
                   src={pkg.images[0]}
@@ -140,17 +145,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-20">
+      <section className="bg-sand py-20">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
           <div>
             <h2 className="text-4xl sm:text-5xl">{LIVE.scheduleTitle}</h2>
-            <p className="mt-5 text-base leading-relaxed text-[#272727]">{LIVE.schedule}</p>
-            <p className="mt-4 text-base leading-relaxed text-[#272727]">{LIVE.scheduleStay}</p>
+            <p className="mt-5 text-base leading-relaxed text-[#1a2a24]">{LIVE.schedule}</p>
+            <p className="mt-4 text-base leading-relaxed text-[#1a2a24]">{LIVE.scheduleStay}</p>
           </div>
           <div className="relative min-h-80 overflow-hidden">
             <Image
-              src={IMG.aerialHotel}
-              alt="Aerial view of Ayara Kamala Resort & Spa in Kamala, Phuket, home of the pole camp"
+              src={VENUE.aerial.src}
+              alt={VENUE.aerial.alt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -173,12 +178,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#0e0e0e] py-20 text-white">
+      <ScenicSection src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt} overlayClassName="bg-jungle/72">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <div className="relative min-h-80 overflow-hidden">
             <Image
-              src={IMG.studio}
-              alt="Air-conditioned pole studio with floor-to-ceiling poles at Ayara Kamala Phuket"
+              src={VENUE.studio.src}
+              alt={VENUE.studio.alt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -191,7 +196,11 @@ export default function HomePage() {
             <ExpectBlock title={LIVE.activitiesTitle} items={LIVE.activities} />
           </div>
         </div>
-      </section>
+      </ScenicSection>
+
+      <InstagramGallery />
+
+      <ScenicBand src={SCENERY.phuketSunset.src} alt={SCENERY.phuketSunset.alt} />
 
       <section id="faqs" className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
         <h2 className="text-4xl sm:text-5xl">Frequently asked questions</h2>
@@ -221,7 +230,7 @@ export default function HomePage() {
 
 function LevelCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="border border-border bg-white p-7">
+    <div className="border border-white/15 bg-white/95 p-7 text-[#1a2a24]">
       <h3 className="font-heading text-2xl">{title}</h3>
       <p className="mt-4 text-sm leading-relaxed text-[#272727]">{body}</p>
     </div>

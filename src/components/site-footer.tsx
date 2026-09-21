@@ -1,11 +1,11 @@
-import { INSTAGRAM_URL } from "@/lib/site";
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 import { LIVE } from "@/lib/live-copy";
 import { WHATSAPP_ME } from "@/lib/whatsapp";
 import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-[#0e0e0e] text-white">
+    <footer className="mt-auto border-t border-white/10 bg-jungle text-white">
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
           <p className="font-heading text-2xl">{LIVE.siteName}</p>
@@ -30,8 +30,13 @@ export function SiteFooter() {
             </a>
           </p>
           <p className="mt-1">
-            <a className="underline-offset-4 hover:underline" href={INSTAGRAM_URL}>
-              Instagram @phuketpoleretreats
+            <a
+              className="underline-offset-4 hover:underline"
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram @{INSTAGRAM_HANDLE}
             </a>
           </p>
         </div>
@@ -53,6 +58,9 @@ export function SiteFooter() {
           </Link>
         </div>
       </div>
+      <p className="border-t border-white/10 px-4 py-4 text-center text-xs text-white/50">
+        Phuket scenery via Unsplash. Studio photos from the retreat at Ayara Kamala.
+      </p>
     </footer>
   );
 }

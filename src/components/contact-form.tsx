@@ -88,7 +88,7 @@ export function ContactForm() {
           name="interest"
           value={interest}
           onChange={(event) => setInterest(event.target.value)}
-          className="h-11 w-full border border-input bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="h-11 w-full border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {INTEREST_OPTIONS.map((option) => (
             <option key={option} value={option}>

@@ -137,7 +137,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
                   );
                   setFieldError((current) => (current === "occupancy" ? null : current));
                 }}
-                className={`flex cursor-pointer flex-col gap-1 border bg-white p-4 ${
+                className={`flex cursor-pointer flex-col gap-1 border bg-card p-4 ${
                   occupancy === item.occupancy
                     ? "border-primary ring-2 ring-primary/20"
                     : "border-border"
@@ -181,9 +181,9 @@ export function BookingForm({ pkg, cancelled }: Props) {
           <label
             data-testid="plan-full"
             onClick={() => setPaymentPlan("full")}
-            className={`flex cursor-pointer flex-col gap-2 border bg-white p-5 transition-shadow ${
+            className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
               paymentPlan === "full"
-                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(240,82,61,0.08)]"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(15,94,82,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
           >
@@ -203,9 +203,9 @@ export function BookingForm({ pkg, cancelled }: Props) {
             onClick={() => {
               if (installment?.available !== false) setPaymentPlan("installments");
             }}
-            className={`flex cursor-pointer flex-col gap-2 border bg-white p-5 transition-shadow ${
+            className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
               paymentPlan === "installments"
-                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(240,82,61,0.08)]"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(15,94,82,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
           >
@@ -228,7 +228,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
           </label>
         </RadioGroup>
         {paymentPlan === "installments" && installment?.available ? (
-          <ol className="space-y-2 border border-border bg-[#fafafa] p-4 text-sm">
+          <ol className="space-y-2 border border-border bg-sand p-4 text-sm">
             {installment.charges.map((charge) => (
               <li key={`${charge.label}-${charge.isoDate}`} className="flex justify-between gap-4">
                 <span>
@@ -314,7 +314,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
               key={item}
               data-testid={`level-${item}`}
               onClick={() => setLevel(item)}
-              className={`flex cursor-pointer items-center gap-2 border bg-white px-3 py-2 text-sm ${
+              className={`flex cursor-pointer items-center gap-2 border bg-card px-3 py-2 text-sm ${
                 level === item ? "border-primary ring-2 ring-primary/20" : "border-border"
               }`}
             >

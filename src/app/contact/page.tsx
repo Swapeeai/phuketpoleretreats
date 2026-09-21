@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { ScenicBand } from "@/components/scenic";
+import { SCENERY } from "@/lib/images";
 import { LIVE } from "@/lib/live-copy";
 import { pageMetadata } from "@/lib/seo";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
@@ -14,6 +16,8 @@ export const metadata: Metadata = pageMetadata({
 
 export default function ContactPage() {
   return (
+    <>
+    <ScenicBand src={SCENERY.emeraldWater.src} alt={SCENERY.emeraldWater.alt} />
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <Breadcrumbs
         items={[
@@ -27,9 +31,10 @@ export default function ContactPage() {
         Send a note about the pole training week and we’ll open WhatsApp ({WHATSAPP_DISPLAY}) with
         your message ready for Tara and Jenny.
       </p>
-      <div className="mt-8 border border-border bg-white p-6">
+      <div className="mt-8 border border-border bg-card p-6">
         <ContactForm />
       </div>
     </div>
+    </>
   );
 }

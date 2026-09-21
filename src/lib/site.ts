@@ -7,7 +7,8 @@ export const SITE_URL =
 export const WHATSAPP_E164 = "+66928320802";
 export { WHATSAPP_DISPLAY };
 export const WHATSAPP_URL = WHATSAPP_ME;
-export const INSTAGRAM_URL = "https://www.instagram.com/phuketpoleretreats";
+export const INSTAGRAM_HANDLE = "phuketpoleretreats";
+export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
 export const ORGANISERS = ["Tara", "Jenny"] as const;
 
 /** Prefer the public host the visitor used (tunnel/HTTPS) so Stripe/mock redirects stay on that URL. */

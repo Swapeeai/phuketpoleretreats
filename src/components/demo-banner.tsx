@@ -6,7 +6,7 @@ export function DemoBanner() {
   }
 
   return (
-    <div className="bg-[#0e0e0e] px-4 py-2 text-center text-sm text-white">
+    <div className="bg-jungle px-4 py-2 text-center text-sm text-white">
       Demo checkout is on — nothing is charged. You can still pay in full, or put €500 down and
       continue with monthly payments.
     </div>

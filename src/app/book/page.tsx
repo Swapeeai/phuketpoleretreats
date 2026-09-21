@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
+import { ScenicBand } from "@/components/scenic";
 import { buttonVariants } from "@/components/ui/button";
 import { LIVE } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
+import { SCENERY } from "@/lib/images";
 import { PACKAGES } from "@/lib/retreat";
 import { eventJsonLd, pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -19,6 +21,8 @@ export const metadata: Metadata = pageMetadata({
 
 export default function BookIndexPage() {
   return (
+    <>
+    <ScenicBand src={SCENERY.phuketCoast.src} alt={SCENERY.phuketCoast.alt} />
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <JsonLd data={eventJsonLd()} />
       <Breadcrumbs
@@ -67,7 +71,7 @@ export default function BookIndexPage() {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         {PACKAGES.map((pkg) => (
-          <article key={pkg.slug} className="overflow-hidden border border-border bg-white">
+          <article key={pkg.slug} className="overflow-hidden border border-border bg-card">
             <div className="relative h-56">
               <Image
                 src={pkg.images[0]}
@@ -110,5 +114,6 @@ export default function BookIndexPage() {
         .
       </p>
     </div>
+    </>
   );
 }

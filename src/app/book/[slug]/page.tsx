@@ -76,7 +76,7 @@ export default async function PackagePage({ params, searchParams }: Props) {
           .
         </p>
       </div>
-      <div className="border border-border bg-white p-5 sm:p-6">
+      <div className="border border-border bg-card p-5 sm:p-6">
         <h2 className="text-2xl">Reserve your spot</h2>
         <p className="mt-2 text-sm leading-relaxed text-[#272727]">
           Pay in full, or €500 deposit today and monthly payments after.

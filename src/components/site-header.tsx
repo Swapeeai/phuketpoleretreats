@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { Instagram, Menu } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { LIVE } from "@/lib/live-copy";
 import { IMG } from "@/lib/retreat";
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -23,7 +24,7 @@ const NAV = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-white/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-sand/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -40,11 +41,20 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-[#3e3e3e] transition-colors hover:text-foreground"
+              className="text-sm text-[#4a5a52] transition-colors hover:text-foreground"
             >
               {item.label}
             </Link>
           ))}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#4a5a52] transition-colors hover:text-primary"
+            aria-label={`Instagram @${INSTAGRAM_HANDLE}`}
+          >
+            <Instagram className="size-5" />
+          </a>
           <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-full px-5")}>
             {LIVE.bookNow}
           </Link>
@@ -66,6 +76,14 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-1 text-base"
+              >
+                Instagram @{INSTAGRAM_HANDLE}
+              </a>
               <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 rounded-full")}>
                 {LIVE.bookNow}
               </Link>

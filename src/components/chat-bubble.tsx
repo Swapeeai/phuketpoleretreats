@@ -71,7 +71,7 @@ export function ChatBubble() {
           aria-modal="true"
           aria-labelledby={titleId}
           data-testid="chat-panel"
-          className="pointer-events-auto mb-3 w-[min(22rem,calc(100vw-1.5rem))] border border-border bg-white shadow-xl"
+          className="pointer-events-auto mb-3 w-[min(22rem,calc(100vw-1.5rem))] border border-border bg-card shadow-xl"
         >
           <div className="flex items-start justify-between gap-3 bg-primary px-4 py-3 text-primary-foreground">
             <div>
@@ -135,7 +135,7 @@ export function ChatBubble() {
         ref={buttonRef}
         type="button"
         data-testid="chat-bubble"
-        className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-white transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-sand transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-label="How can I help you?"
         aria-haspopup="dialog"
         aria-expanded={open}
