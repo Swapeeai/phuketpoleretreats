@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Instagram, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,6 +13,25 @@ import { LIVE } from "@/lib/live-copy";
 import { IMG } from "@/lib/retreat";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const NAV = [
   { href: "/", label: "Retreat" },
@@ -53,7 +72,7 @@ export function SiteHeader() {
             className="text-[#4a5a52] transition-colors hover:text-primary"
             aria-label={`Instagram @${INSTAGRAM_HANDLE}`}
           >
-            <Instagram className="size-5" />
+            <InstagramIcon className="size-5" />
           </a>
           <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-full px-5")}>
             {LIVE.bookNow}
