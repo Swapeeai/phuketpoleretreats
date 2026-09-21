@@ -44,7 +44,7 @@ export const SCENERY = {
 export const VENUE = {
   studio: {
     src: "/images/venue/studio.jpg",
-    alt: "Pole studio at Ayara Kamala with floor-to-ceiling poles",
+    alt: "Pole studio at Ayara Kamala with floor-to-ceiling poles and sea views",
   },
   aerial: {
     src: "/images/venue/aerial-hotel.jpg",
@@ -52,7 +52,7 @@ export const VENUE = {
   },
   pool: {
     src: "/images/venue/pool.jpg",
-    alt: "Private pool at Ayara Kamala Resort & Spa, Phuket",
+    alt: "Private infinity pool at sunset at Ayara Kamala Resort & Spa, Phuket",
   },
   oceanRoom: {
     src: "/images/venue/ocean-room.jpg",

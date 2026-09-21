@@ -21,9 +21,9 @@ Self-hosted JPEGs converted from photos already published on [phuketpoleretreats
 
 | File | Subject |
 | --- | --- |
-| `public/images/venue/studio.jpg` | Pole studio at Ayara Kamala |
+| `public/images/venue/studio.jpg` | Pole studio at Ayara Kamala (live-site asset “pole studios near me”) |
 | `public/images/venue/aerial-hotel.jpg` | Aerial of Ayara Kamala Resort & Spa |
-| `public/images/venue/pool.jpg` | Private pool |
+| `public/images/venue/pool.jpg` | Private infinity pool at sunset |
 | `public/images/venue/ocean-room.jpg` | Deluxe ocean-view room |
 
 ## Instagram
