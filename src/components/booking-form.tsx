@@ -183,7 +183,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             onClick={() => setPaymentPlan("full")}
             className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
               paymentPlan === "full"
-                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(15,94,82,0.12)]"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(27,127,120,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
           >
@@ -205,7 +205,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             }}
             className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
               paymentPlan === "installments"
-                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(15,94,82,0.12)]"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(27,127,120,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
           >

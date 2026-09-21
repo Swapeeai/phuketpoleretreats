@@ -4,7 +4,7 @@ import { INSTAGRAM_GALLERY } from "@/lib/images";
 
 export function InstagramGallery() {
   return (
-    <section id="instagram" className="bg-sand py-20">
+    <section id="instagram" className="bg-sky py-24 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -40,7 +40,7 @@ export function InstagramGallery() {
                 sizes="(max-width: 768px) 50vw, 25vw"
                 className="object-cover transition duration-500 group-hover:scale-105"
               />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-jungle/80 to-transparent px-3 py-3 text-sm text-white opacity-0 transition group-hover:opacity-100">
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary/70 to-transparent px-3 py-3 text-sm text-white opacity-0 transition group-hover:opacity-100">
                 {item.label}
               </span>
             </a>

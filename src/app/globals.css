@@ -10,9 +10,11 @@
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-heading: var(--font-cormorant), ui-serif, Georgia, serif;
-  --color-sand: #f4efe6;
-  --color-jungle: #0c2f29;
-  --color-ocean: #2a8f8c;
+  --color-sand: #faf6ee;
+  --color-sky: #eaf5f8;
+  --color-aqua: #e3f4f0;
+  --color-jungle: #1f6f68;
+  --color-ocean: #2f9aa8;
   --color-sunset: #d4896a;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -53,34 +55,36 @@
 }
 
 :root {
-  /* Tropical escape: jungle emerald, sand, cream. Logo may stay orange; UI does not. */
-  --background: #f4efe6;
-  --foreground: #1a2a24;
-  --card: #fffcf7;
-  --card-foreground: #1a2a24;
-  --popover: #fffcf7;
-  --popover-foreground: #1a2a24;
-  --primary: #0f5e52;
-  --primary-foreground: #f7f4ec;
-  --secondary: #e8e0d2;
-  --secondary-foreground: #1a2a24;
-  --muted: #ede6d9;
-  --muted-foreground: #4a5a52;
-  --accent: #d7e8e4;
-  --accent-foreground: #0c2f29;
+  /* Bright tropical day: lagoon green + sky blue on sand/cream. Logo may stay orange. */
+  --background: #faf8f3;
+  --foreground: #243832;
+  --card: #ffffff;
+  --card-foreground: #243832;
+  --popover: #ffffff;
+  --popover-foreground: #243832;
+  --primary: #1b7f78;
+  --primary-foreground: #f7fffd;
+  --secondary: #eaf5f8;
+  --secondary-foreground: #243832;
+  --muted: #f3eee4;
+  --muted-foreground: #4d5f5c;
+  --accent: #e3f4f0;
+  --accent-foreground: #1b7f78;
   --destructive: #9b2c2c;
-  --border: #ddd4c4;
-  --input: #ddd4c4;
-  --ring: #0f5e52;
-  --chart-1: #0f5e52;
-  --chart-2: #2a8f8c;
-  --chart-3: #0c2f29;
+  --border: #e2ddd2;
+  --input: #e2ddd2;
+  --ring: #1b7f78;
+  --chart-1: #1b7f78;
+  --chart-2: #2f9aa8;
+  --chart-3: #eaf5f8;
   --chart-4: #d4896a;
-  --chart-5: #e8e0d2;
+  --chart-5: #e3f4f0;
   --radius: 0.5rem;
-  --color-sand: #f4efe6;
-  --color-jungle: #0c2f29;
-  --color-ocean: #2a8f8c;
+  --color-sand: #faf6ee;
+  --color-sky: #eaf5f8;
+  --color-aqua: #e3f4f0;
+  --color-jungle: #1f6f68;
+  --color-ocean: #2f9aa8;
   --color-sunset: #d4896a;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);

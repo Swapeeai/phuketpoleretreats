@@ -135,7 +135,7 @@ export function ChatBubble() {
         ref={buttonRef}
         type="button"
         data-testid="chat-bubble"
-        className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-sand transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-sky transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-label="How can I help you?"
         aria-haspopup="dialog"
         aria-expanded={open}

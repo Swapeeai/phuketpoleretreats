@@ -1,6 +1,6 @@
 # Phuket Pole Retreats
 
-Next.js rebuild of [phuketpoleretreats.com](https://www.phuketpoleretreats.com/). Customer-facing wording, instructors, packages, and the first-page hero video are taken from the live Squarespace site. The visual theme is a **tropical escape** palette (jungle green, sand, cream) — the orange logo stays, UI accents do not. Booking adds Stripe **pay in full** or **€500 deposit today and monthly payments after**.
+Next.js rebuild of [phuketpoleretreats.com](https://www.phuketpoleretreats.com/). Customer-facing wording, instructors, packages, and the first-page hero video are taken from the live Squarespace site. The visual theme is a **bright tropical day** palette (lagoon green, sky blue, sand, cream) — the orange logo stays, UI accents do not. Booking adds Stripe **pay in full** or **€500 deposit today and monthly payments after**.
 
 The live site is **Squarespace**. This repo cannot log into that CMS, so the bookable slice lives here.
 
@@ -20,13 +20,14 @@ Open [http://127.0.0.1:43211](http://127.0.0.1:43211).
 
 | Token | Hex | Use |
 | --- | --- | --- |
-| Jungle / primary | `#0f5e52` | Buttons, links, selected states, chat bubble, focus rings |
-| Deep jungle | `#0c2f29` | Footer, overlays, demo banner |
-| Ocean | `#2a8f8c` | Soft complementary accent |
-| Sunset | `#d4896a` | Small highlight only |
-| Sand | `#f4efe6` | Page background |
-| Cream card | `#fffcf7` | Cards / forms |
-| Ink | `#1a2a24` | Body text |
+| Lagoon / primary | `#1b7f78` | Buttons, links, selected states, chat bubble, focus rings |
+| Ocean | `#2f9aa8` | Complementary sea blue |
+| Sky | `#eaf5f8` | Footer, Instagram, airy section backgrounds |
+| Aqua | `#e3f4f0` | Soft wash, marquee |
+| Sand | `#faf6ee` | Alternate section background |
+| Cream page | `#faf8f3` | Page background |
+| White card | `#ffffff` | Cards / forms |
+| Ink | `#243832` | Body text |
 
 Logo may remain orange; it is not used as the UI accent.
 
@@ -67,7 +68,7 @@ Unique titles and meta descriptions for 2027, one H1 per page, semantic headings
 
 ## Contact & chat
 
-There is no public email address. The **Contact us** form (`/contact`) and the jungle-green **How can I help you?** bubble both open WhatsApp with a prefilled message:
+There is no public email address. The **Contact us** form (`/contact`) and the lagoon-green **How can I help you?** bubble both open WhatsApp with a prefilled message:
 
 - Number: **+66 92 832 0802** (`wa.me/66928320802`)
 - Phones: `https://wa.me/66928320802?text=...`

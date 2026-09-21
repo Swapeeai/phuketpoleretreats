@@ -17,8 +17,8 @@ export const metadata: Metadata = pageMetadata({
 export default function ContactPage() {
   return (
     <>
-    <ScenicBand src={SCENERY.emeraldWater.src} alt={SCENERY.emeraldWater.alt} />
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <ScenicBand src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt} />
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <Breadcrumbs
         items={[
           { name: "Home", path: "/" },

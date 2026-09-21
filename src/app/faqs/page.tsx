@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function FaqsPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <Breadcrumbs
         items={[
           { name: "Home", path: "/" },
