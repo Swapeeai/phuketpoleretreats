@@ -22,7 +22,7 @@ export const metadata: Metadata = pageMetadata({
 export default function BookIndexPage() {
   return (
     <>
-    <ScenicBand src={SCENERY.phuketCoast.src} alt={SCENERY.phuketCoast.alt} />
+    <ScenicBand src={SCENERY.turquoiseLongtail.src} alt={SCENERY.turquoiseLongtail.alt} />
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <JsonLd data={eventJsonLd()} />
       <Breadcrumbs

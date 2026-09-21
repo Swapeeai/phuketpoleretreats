@@ -40,7 +40,7 @@ Self-hosted in `public/images/` (see [IMAGE_CREDITS.md](./IMAGE_CREDITS.md)):
 
 Instagram: [@phuketpoleretreats](https://www.instagram.com/phuketpoleretreats) in the header, footer, and a gallery of official venue stills that link to the profile.
 
-The homepage **Workshop Timetable** shows the official colourful timetable graphic (full-width, tap to open full size), with workshop dates 28 January–1 February 2027 and hotel package 27 January–2 February 2027. Saturday 30 January has its own boat-trip section.
+The **Workshop Timetable** lives at `/timetable` (and still on the homepage). It shows the official colourful timetable graphic (full-width, tap to open full size), with a tropical photo band at the top of the page, workshop dates 28 January–1 February 2027 and hotel package 27 January–2 February 2027. Saturday 30 January has its own boat-trip section.
 
 ## Stripe keys
 
@@ -70,11 +70,13 @@ Unique titles and meta descriptions for 2027, one H1 per page, semantic headings
 
 ## Contact & chat
 
-There is no public email address. The **Contact us** form (`/contact`) and the lagoon-green **How can I help you?** bubble both open WhatsApp with a prefilled message:
+There is no public email address. The **Contact us** form (`/contact`) and the lagoon-green **How can I help you?** bubble both open WhatsApp with a prefilled message. The form asks for name, email, WhatsApp number, a free-text subject, and a message — all bundled into the WhatsApp text.
 
 - Number: **+66 92 832 0802** (`wa.me/66928320802`)
 - Phones: `https://wa.me/66928320802?text=...`
 - Desktop: `https://web.whatsapp.com/send?phone=66928320802&text=...`
+
+The customer UI does not name the organisers. Instructor **Jenny Liebert** is still listed with the teaching team.
 
 ## Scripts
 

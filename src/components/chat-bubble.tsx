@@ -78,7 +78,7 @@ export function ChatBubble() {
               <p id={titleId} className="font-heading text-xl">
                 How can I help you?
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-white/90">Tara & Jenny · WhatsApp</p>
+              <p className="mt-1 text-xs leading-relaxed text-white/90">Message us on WhatsApp</p>
             </div>
             <button
               type="button"

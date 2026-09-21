@@ -10,7 +10,7 @@ import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 export const metadata: Metadata = pageMetadata({
   title: "Contact us about the Phuket pole retreat",
   description:
-    "Message Tara and Jenny on WhatsApp about the Phuket Pole Art Retreat — a pole camp and training week at Ayara Kamala, 28th January - 1st of February 2027. Ask about packages, levels, or booking.",
+    "Message us on WhatsApp about the Phuket Pole Art Retreat — a pole camp and training week at Ayara Kamala, 28th January - 1st of February 2027. Ask about packages, levels, or booking.",
   path: "/contact",
 });
 
@@ -27,9 +27,10 @@ export default function ContactPage() {
       />
       <h1 className="mt-4 text-4xl sm:text-5xl">Contact us</h1>
       <p className="mt-4 text-base leading-relaxed text-[#272727]">{LIVE.contactLine}</p>
-      <p className="mt-3 text-sm text-[#3e3e3e]">
-        Send a note about the pole training week and we’ll open WhatsApp ({WHATSAPP_DISPLAY}) with
-        your message ready for Tara and Jenny.
+      <p className="mt-3 text-sm leading-relaxed text-[#3e3e3e]">
+        We are a small retreat team in Phuket — warm, on-the-ground, and happy to help you choose a
+        package or level. Fill in the form and we’ll open WhatsApp ({WHATSAPP_DISPLAY}) with your
+        enquiry ready to send.
       </p>
       <div className="mt-8 border border-border bg-card p-6">
         <ContactForm />

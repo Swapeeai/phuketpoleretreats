@@ -27,18 +27,24 @@ export function openWhatsApp(text: string) {
 
 export function contactWhatsAppText(input: {
   name: string;
+  email: string;
+  whatsapp: string;
+  subject: string;
   message: string;
-  interest: string;
 }) {
   return [
-    `Hi Tara & Jenny — I’m ${input.name}.`,
-    `I’m writing about the Phuket Pole Art Retreat (${input.interest}).`,
+    `Hello — I’m ${input.name.trim()}.`,
+    `Subject: ${input.subject.trim()}`,
     "",
     input.message.trim(),
+    "",
+    "—",
+    `Email: ${input.email.trim()}`,
+    `WhatsApp: ${input.whatsapp.trim()}`,
   ].join("\n");
 }
 
 export function chatWhatsAppText(input: { name?: string; message: string }) {
   const who = input.name?.trim() ? `I’m ${input.name.trim()}. ` : "";
-  return `Hi Tara & Jenny — ${who}${input.message.trim()}`;
+  return `Hello — ${who}${input.message.trim()}`;
 }

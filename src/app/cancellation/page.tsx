@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Cancellation policy",
   description:
-    "Phuket Pole Retreats bookings are non-refundable. If we cancel the pole camp, you may transfer to a future retreat. Raise issues during the stay with Tara and Jenny.",
+    "Phuket Pole Retreats bookings are non-refundable. If we cancel the pole camp, you may transfer to a future retreat. Raise issues during the stay with the retreat team.",
   path: "/cancellation",
 });
 
@@ -43,8 +43,8 @@ export default function CancellationPage() {
       </p>
       <h2 className="text-2xl">Issues during the retreat</h2>
       <p>
-        Raise them with both organisers, Tara and Jenny, as soon as possible. Issues not raised
-        during the retreat are not grounds for a refund.
+        Raise them with the retreat team as soon as possible. Issues not raised during the retreat
+        are not grounds for a refund.
       </p>
       <p>
         Questions:{" "}

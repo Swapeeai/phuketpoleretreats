@@ -3,14 +3,15 @@ import { LIVE } from "@/lib/live-copy";
 import { TIMETABLE } from "@/lib/images";
 import { TIMETABLE_DAYS, TIMETABLE_META } from "@/lib/timetable";
 
-export function WorkshopTimetable() {
+export function WorkshopTimetable({ heading = "h2" }: { heading?: "h1" | "h2" }) {
+  const Title = heading;
   return (
     <section id="timetable" className="bg-sand py-24 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <p className="text-center text-xs font-medium uppercase tracking-[0.22em] text-primary">
           {TIMETABLE_META.eyebrow}
         </p>
-        <h2 className="mt-3 text-center text-4xl sm:text-5xl">{TIMETABLE_META.title}</h2>
+        <Title className="mt-3 text-center text-4xl sm:text-5xl">{TIMETABLE_META.title}</Title>
         <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-foreground">
           {LIVE.schedule}
         </p>

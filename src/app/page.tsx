@@ -154,6 +154,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <ScenicBand src={SCENERY.emeraldWater.src} alt={SCENERY.emeraldWater.alt} />
       <WorkshopTimetable />
 
       <BoatDay />

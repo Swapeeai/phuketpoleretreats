@@ -20,10 +20,10 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="text-sm">
-          <p className="font-medium">Talk to Tara & Jenny</p>
+          <p className="font-medium">Message us on WhatsApp</p>
           <p className="mt-2">
             <Link className="text-primary underline-offset-4 hover:underline" href="/contact">
-              Contact us on WhatsApp
+              Send a message
             </Link>
           </p>
           <p className="mt-1">
@@ -43,7 +43,7 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-col gap-2 text-sm">
-          <Link className="hover:text-primary hover:underline" href="/#timetable">
+          <Link className="hover:text-primary hover:underline" href="/timetable">
             Timetable
           </Link>
           <Link className="hover:text-primary hover:underline" href="/book">

@@ -36,7 +36,7 @@ function InstagramIcon({ className }: { className?: string }) {
 const NAV = [
   { href: "/", label: "Retreat" },
   { href: "/#instructors", label: "Instructors" },
-  { href: "/#timetable", label: "Timetable" },
+  { href: "/timetable", label: "Timetable" },
   { href: "/book", label: "Book" },
   { href: "/faqs", label: "FAQs" },
   { href: "/contact", label: "Contact" },

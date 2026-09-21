@@ -1,3 +1,5 @@
+import { VENUE } from "@/lib/images";
+
 export const IMG = {
   logo: "https://images.squarespace-cdn.com/content/v1/68fb556b0d1f83510d98f5ad/199c1f2d-1be8-421a-8555-3b1665a39e7e/phuket+pole+retreat+logo_final-01+png.png?format=750w",
   wordmark:
@@ -252,18 +254,24 @@ export const INSTRUCTORS = [
   },
 ];
 
-export const FAQS = [
+export type FaqItem = {
+  q: string;
+  a: string;
+  image?: { src: string; alt: string };
+};
+
+export const FAQS: FaqItem[] = [
   {
     q: "Is the retreat suitable for dancers of all levels?",
-    a: "This year’s groups are split into Intermediate, Advanced, and Pro. Intermediate polers strengthen foundations and build fluidity. Advanced polers refine personal style and artistic performance. Pro polers focus on combo creation, musicality, choreography, and style. We welcome polers aged 18+.",
+    a: "Yes — this year we look after Intermediate, Advanced, and Pro polers, so you train in a group that matches where you are. Intermediate dancers strengthen foundations and build fluidity. Advanced dancers refine personal style and artistic performance. Pro dancers focus on combo creation, musicality, choreography, and style. We welcome polers aged 18+. If you are not sure which group fits, message us on WhatsApp and we will help you choose.",
   },
   {
     q: "When do the workshops run, and when is the hotel stay?",
-    a: "The camp and workshops run 28 January to 1 February 2027. Hotel / accommodation packages check in on 27 January and check out on 2 February 2027. Workshops-only guests organise their own hotel.",
+    a: "The camp and workshops run 28 January to 1 February 2027. Hotel / accommodation packages check in on 27 January and check out on 2 February 2027, so you have a quiet night to settle in before class and a morning after the last workshop. Workshops-only guests organise their own hotel.",
   },
   {
     q: "How many hours of pole will we do per day?",
-    a: "Eight 90-minute workshops across the week — 12 hours in total. Most days you have two sessions; Saturday 30 January is a shorter morning then the group boat trip, and Monday 1 February finishes after the last class with an optional onsen/spa or early checkout. Your welcome pack is emailed a few months before the retreat.",
+    a: "Eight 90-minute workshops across the week — 12 hours in total, with plenty of time to rest, swim, and enjoy Phuket around the training. Most days you have two sessions; Saturday 30 January is a shorter morning then the group boat trip, and Monday 1 February finishes after the last class with an optional onsen/spa or early checkout. Your welcome pack is emailed a few months before the retreat.",
   },
   {
     q: "How do payments work?",
@@ -271,27 +279,35 @@ export const FAQS = [
   },
   {
     q: "What should I pack?",
-    a: "Comfortable pole attire, extra workout gear if you want to train outside class, grip aids, beachwear, sunscreen, casual clothes, and something nice for the welcome dinner.",
+    a: "Bring what makes you feel good in class: comfortable pole attire, extra workout gear if you want to train outside the workshops, grip aids, beachwear, sunscreen, casual clothes, and something nice for the welcome dinner. If you forget a grip aid, just ask — we will help you settle in.",
   },
   {
     q: "What accommodation is included?",
-    a: "Workshop + hotel packages stay at Ayara Kamala Resort & Spa, where the studio is. Shared rooms and private (solo) suites are available, some with pool access or private pools. Workshops-only means you organise your own hotel. If you book shared and are coming solo, we can match you with another guest — message us on WhatsApp.",
+    a: "Workshop + hotel packages stay at Ayara Kamala Resort & Spa — a hillside hotel in Kamala with sea views, so camp life feels easy and close. Shared rooms and private (solo) suites are available, some with pool access or private pools. Workshops-only means you organise your own hotel. If you book shared and are coming solo, we can match you with another guest — message us on WhatsApp.",
+    image: { src: VENUE.aerial.src, alt: VENUE.aerial.alt },
+  },
+  {
+    q: "Where is the studio?",
+    a: "The pole studio is inside the hotel, so you do not have to walk far — it is straight from your class to your room. The space is air-conditioned, with floor-to-ceiling poles and a view out towards the sea, and the hotel pool is right there when you want to cool down. You can train, rest, and swim without leaving the grounds.",
+    image: { src: VENUE.studio.src, alt: VENUE.studio.alt },
   },
   {
     q: "Is transport included?",
-    a: "Flights and airport transfers are not included.",
+    a: "Flights and airport transfers are not included, so you can book whatever works for your dates. Ayara Kamala is about an hour from Phuket airport, and we are happy to point you in the right direction on WhatsApp.",
   },
   {
     q: "Are meals included?",
-    a: "The welcome dinner on the first night is included for every package. Hotel packages include daily breakfast. Other meals are not included.",
+    a: "You will not go hungry on night one: the welcome dinner is included for every package. Hotel packages also include daily breakfast. Other meals are yours to enjoy in Kamala — the beach, shops and restaurants are a short shuttle away.",
+    image: { src: VENUE.oceanRoom.src, alt: VENUE.oceanRoom.alt },
   },
   {
     q: "Can I come alone? Can I bring a non-poler?",
-    a: "Yes to both. Many guests come solo. If you bring a partner, friend, or relative who does not pole, book the Solo hotel package so they can stay with you at no extra room cost.",
+    a: "Yes to both, and you will be in good company. Many guests come solo and leave with new pole friends. If you bring a partner, friend, or relative who does not pole, book the Solo hotel package so they can stay with you at no extra room cost.",
+    image: { src: VENUE.pool.src, alt: VENUE.pool.alt },
   },
   {
     q: "What is the cancellation policy?",
-    a: "Bookings are non-refundable. If you find someone to take your place, notify us and we will update the booking. If we have to cancel the retreat, you may transfer to a future retreat. Raise any issues during the stay with both Tara and Jenny.",
+    a: "Bookings are non-refundable. If you find someone to take your place, notify us and we will update the booking. If we have to cancel the retreat, you may transfer to a future retreat. If anything comes up during the stay, tell the retreat team as soon as you can — we are on site and here to help.",
   },
 ];
 

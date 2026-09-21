@@ -29,7 +29,7 @@ Self-hosted JPEGs converted from photos already published on [phuketpoleretreats
 
 ## Workshop timetable (retreat graphic)
 
-The official colourful **PHUKET POLE RETREAT — Workshop Timetable** graphic, self-hosted from the same asset published on the live Squarespace site (`Screenshot 2026-09-11 at 15.19.52.png`). Displayed as-is on the homepage — not recreated in HTML.
+The official colourful **PHUKET POLE RETREAT — Workshop Timetable** graphic, self-hosted from the same asset published on the live Squarespace site (`Screenshot 2026-09-11 at 15.19.52.png`). Displayed as-is on `/timetable` and the homepage — not recreated in HTML.
 
 | File | Subject |
 | --- | --- |
