@@ -2,11 +2,17 @@ import { INSTAGRAM_URL } from "@/lib/site";
 
 /** Self-hosted scenery: Unsplash License (https://unsplash.com/license). */
 export const SCENERY = {
-  kamalaBeach: {
-    src: "/images/phuket/kamala-beach.jpg",
-    alt: "Laem Singh Beach near Kamala, Phuket — sand, sea and jungle-covered hillside",
-    credit: "TRAVELINGVIBE.COM (@travelingvibecom) — Unsplash License, photo qcd0QqGMGzE",
-    href: "https://unsplash.com/photos/qcd0QqGMGzE",
+  phiPhiLongtails: {
+    src: "/images/phuket/phi-phi-longtails.jpg",
+    alt: "Thai longtail boats on a tropical beach beneath green limestone cliffs — classic Andaman Sea scene",
+    credit: "Unsplash License, photo 1552465011-b4e21bf6e79a (Phi Phi Islands longtail boats)",
+    href: "https://unsplash.com/photos/1552465011-b4e21bf6e79a",
+  },
+  longtailLagoon: {
+    src: "/images/phuket/longtail-lagoon.jpg",
+    alt: "Longtail boats in turquoise water beside a lush green cliff in Thailand",
+    credit: "Prakasam Mathaiyan (@iamprakasam) — Unsplash License, photo poMDxMaQuHo",
+    href: "https://unsplash.com/photos/poMDxMaQuHo",
   },
   kamalaIslands: {
     src: "/images/phuket/kamala-islands.jpg",

@@ -24,16 +24,18 @@ export function ScenicSection({
   alt,
   overlayClassName = "bg-gradient-to-b from-sky/70 via-white/72 to-sky/75",
   className,
+  id,
   children,
 }: {
   src: string;
   alt: string;
   overlayClassName?: string;
   className?: string;
+  id?: string;
   children: ReactNode;
 }) {
   return (
-    <section className={cn("relative overflow-hidden py-24 text-foreground sm:py-28", className)}>
+    <section id={id} className={cn("relative overflow-hidden py-24 text-foreground sm:py-28", className)}>
       <Image src={src} alt={alt} fill sizes="100vw" quality={70} className="object-cover" />
       <div className={`absolute inset-0 ${overlayClassName}`} />
       <div className="relative z-10">{children}</div>

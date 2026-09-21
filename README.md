@@ -35,10 +35,12 @@ Logo may remain orange; it is not used as the UI accent.
 
 Self-hosted in `public/images/` (see [IMAGE_CREDITS.md](./IMAGE_CREDITS.md)):
 
-- Phuket / tropical scenery from Unsplash (Unsplash License)
+- Phuket / tropical scenery from Unsplash (Unsplash License), including Thai longtail-boat scenes behind the class levels and boat-trip sections
 - Real Ayara Kamala studio, aerial, pool, and room photos from the live retreat site
 
 Instagram: [@phuketpoleretreats](https://www.instagram.com/phuketpoleretreats) in the header, footer, and a gallery of official venue stills that link to the profile.
+
+The homepage **Workshop Timetable** is HTML (not a screenshot): 28 January–1 February 2027 workshops, hotel package 27 January–2 February 2027, with the Saturday 30 January boat trip called out in its own section.
 
 ## Stripe keys
 

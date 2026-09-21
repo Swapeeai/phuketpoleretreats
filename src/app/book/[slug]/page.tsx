@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { DatesCallout } from "@/components/dates-callout";
 import { JsonLd } from "@/components/json-ld";
 import { PackageGallery } from "@/components/package-gallery";
 import { Badge } from "@/components/ui/badge";
@@ -54,6 +55,7 @@ export default async function PackagePage({ params, searchParams }: Props) {
           <Badge variant="secondary">from {formatEur(pkg.fromCents)}</Badge>
         </div>
         <p className="mt-3 text-muted-foreground">{pkg.description}</p>
+        <DatesCallout className="mt-6" />
         <div className="mt-6">
           <PackageGallery title={pkg.title} images={pkg.images} />
         </div>

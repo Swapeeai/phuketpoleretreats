@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { ScenicBand } from "@/components/scenic";
 import { buttonVariants } from "@/components/ui/button";
+import { DatesCallout } from "@/components/dates-callout";
 import { LIVE } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
 import { SCENERY } from "@/lib/images";
@@ -22,7 +23,7 @@ export const metadata: Metadata = pageMetadata({
 export default function BookIndexPage() {
   return (
     <>
-    <ScenicBand src={SCENERY.kamalaBeach.src} alt={SCENERY.kamalaBeach.alt} />
+    <ScenicBand src={SCENERY.phuketCoast.src} alt={SCENERY.phuketCoast.alt} />
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <JsonLd data={eventJsonLd()} />
       <Breadcrumbs
@@ -33,7 +34,7 @@ export default function BookIndexPage() {
       />
       <p className="mt-4 text-sm uppercase tracking-[0.18em] text-primary">{LIVE.heroDates}</p>
       <h1 className="mt-2 text-4xl sm:text-5xl">{LIVE.bookHeading}</h1>
-      <p className="mt-4 max-w-2xl text-[#272727]">{LIVE.accommodationDatesLine}</p>
+      <DatesCallout className="mt-8 max-w-3xl" />
       <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#272727]">
         Pay in full, or €500 deposit today and monthly payments after. {LIVE.depositLive} Bookings
         are non-refundable.

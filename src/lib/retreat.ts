@@ -75,7 +75,7 @@ export const PACKAGES: RetreatPackage[] = [
     highlights: [
       "12 hours of pole workshops with four instructors",
       "Welcome dinner at Ayara Kamala Resort & Spa",
-      "Group boat trip around Phuket’s islands",
+      "Group boat trip around Phuket’s islands, 30 January",
       "Goody bag",
     ],
     images: [IMG.aerialHotel],
@@ -101,7 +101,7 @@ export const PACKAGES: RetreatPackage[] = [
       "42sqm room with sea view",
       "Daily breakfast",
       "60-minute massage at Ayara Spa",
-      "Group boat trip",
+      "Group boat trip, 30 January",
       "Goody bag",
     ],
     images: [
@@ -131,7 +131,7 @@ export const PACKAGES: RetreatPackage[] = [
       "80sqm room with sea view and spa bath",
       "Daily breakfast",
       "60-minute massage",
-      "Group boat trip",
+      "Group boat trip, 30 January",
       "Goody bag",
     ],
     images: [
@@ -164,7 +164,7 @@ export const PACKAGES: RetreatPackage[] = [
       "Pool access directly from your room",
       "Daily breakfast",
       "60-minute massage",
-      "Group boat trip",
+      "Group boat trip, 30 January",
       "Goody bag",
     ],
     images: [
@@ -194,7 +194,7 @@ export const PACKAGES: RetreatPackage[] = [
       "Private pool and spa bath",
       "Daily breakfast",
       "60-minute massage",
-      "Group boat trip",
+      "Group boat trip, 30 January",
       "Goody bag",
     ],
     images: [
@@ -258,8 +258,12 @@ export const FAQS = [
     a: "This year’s groups are split into Intermediate, Advanced, and Pro. Intermediate polers strengthen foundations and build fluidity. Advanced polers refine personal style and artistic performance. Pro polers focus on combo creation, musicality, choreography, and style. We welcome polers aged 18+.",
   },
   {
+    q: "When do the workshops run, and when is the hotel stay?",
+    a: "The camp and workshops run 28 January to 1 February 2027. Hotel / accommodation packages check in on 27 January and check out on 2 February 2027. Workshops-only guests organise their own hotel.",
+  },
+  {
     q: "How many hours of pole will we do per day?",
-    a: "Two 90-minute workshops per day across four days, back to back with a short break — 12 hours in total. Your schedule and welcome pack are emailed a few months before the retreat.",
+    a: "Eight 90-minute workshops across the week — 12 hours in total. Most days you have two sessions; Saturday 30 January is a shorter morning then the group boat trip, and Monday 1 February finishes after the last class with an optional onsen/spa or early checkout. Your welcome pack is emailed a few months before the retreat.",
   },
   {
     q: "How do payments work?",

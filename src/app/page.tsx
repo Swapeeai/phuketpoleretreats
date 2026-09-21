@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BoatDay } from "@/components/boat-day";
+import { DatesCallout } from "@/components/dates-callout";
 import { FaqList } from "@/components/faq-list";
 import { HeroVideo } from "@/components/hero-video";
 import { InstagramGallery } from "@/components/instagram-gallery";
 import { JsonLd } from "@/components/json-ld";
 import { ScenicBand, ScenicSection } from "@/components/scenic";
 import { buttonVariants } from "@/components/ui/button";
+import { WorkshopTimetable } from "@/components/workshop-timetable";
 import { LIVE, LIVE_PACKAGE_BLURB, LIVE_PACKAGE_ORDER } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
 import { SCENERY, VENUE } from "@/lib/images";
@@ -53,7 +56,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ScenicBand src={SCENERY.kamalaBeach.src} alt={SCENERY.kamalaBeach.alt} />
+      <ScenicBand src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt} />
 
       <section id="instructors" className="bg-sand py-24 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -91,7 +94,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ScenicSection src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt}>
+      <section className="bg-background px-4 py-10 sm:px-6">
+        <DatesCallout className="mx-auto max-w-3xl" />
+      </section>
+
+      <ScenicSection
+        id="levels"
+        src={SCENERY.phiPhiLongtails.src}
+        alt={SCENERY.phiPhiLongtails.alt}
+      >
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <h2 id="pole-art-heading" className="sr-only">
             The Pole Art Retreat
@@ -147,24 +158,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-sand py-24 sm:py-28">
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2">
-          <div>
-            <h2 className="text-4xl sm:text-5xl">{LIVE.scheduleTitle}</h2>
-            <p className="mt-5 text-base leading-relaxed text-foreground">{LIVE.schedule}</p>
-            <p className="mt-4 text-base leading-relaxed text-foreground">{LIVE.scheduleStay}</p>
-          </div>
-          <div className="relative min-h-80 overflow-hidden">
-            <Image
-              src={VENUE.aerial.src}
-              alt={VENUE.aerial.alt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </section>
+      <WorkshopTimetable />
+
+      <BoatDay />
 
       <section className="overflow-hidden bg-aqua py-4 text-primary">
         <div className="marquee text-sm uppercase tracking-[0.28em]">

@@ -29,6 +29,12 @@ export const LIVE = {
     "12 hours of pole workshops across 5 days, with 4 world class instructors. A welcome feast, a team boat trip around the beautiful islands of Phuket and lots of free time in between to explore and relax!",
   scheduleStay:
     "For accommodation packages, checkin is on the 27th of January and checkout is on the 2nd of February.",
+  boatDayEyebrow: "Saturday 30 January",
+  boatDayTitle: "A day on the water, together",
+  boatDayLead:
+    "After the morning workshops we all go out — a day on the road and the sea around the beautiful islands of Phuket.",
+  boatDayBody:
+    "It is the holiday in the middle of the training week: the same people you have just been spinning with, out on the water with your favourite instructor. Not another class. Just the group, the islands, and a long, easy afternoon together.",
   whatToExpect: "what to expect",
   studioTitle: "The Studio (Ayara Kamala Phuket)",
   studio: [
@@ -55,7 +61,7 @@ export const LIVE = {
   activities: [
     "Welcome diner at Ayara Kamala with Thai specialities and a sea view",
     "Goody bag and welcome pack",
-    "Group boat trip around the beautiful islands of Phuket",
+    "Group boat trip around the beautiful islands of Phuket on 30 January",
     "Optional extra: Photoshoot",
   ],
   contactLine:
@@ -63,7 +69,7 @@ export const LIVE = {
   bookHeading: "28th January - 1st February 2027 at Ayara Kamala Resort & Spa Phuket",
   priceListLabel: "Price list:",
   accommodationDatesLine:
-    "ACCOMMODATION DATES 27th January - 2nd February (workshops 28th-31st January)",
+    "Hotel / accommodation package: 27 January – 2 February 2027. Camp & workshops: 28 January – 1 February 2027.",
   depositLive:
     "DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before the start of the retreat.",
   workshopsOnlyBlurb:

@@ -12,7 +12,9 @@ export function SiteFooter() {
           <p className="mt-2 text-sm text-muted-foreground">
             Pole Art Retreat · pole camp & training week in Phuket
             <br />
-            {LIVE.heroDates}
+            Workshops {LIVE.heroDates}
+            <br />
+            Hotel 27 January – 2 February 2027
             <br />
             Ayara Kamala Resort & Spa, Kamala
           </p>
@@ -41,6 +43,9 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-col gap-2 text-sm">
+          <Link className="hover:text-primary hover:underline" href="/#timetable">
+            Timetable
+          </Link>
           <Link className="hover:text-primary hover:underline" href="/book">
             {LIVE.bookNow}
           </Link>
