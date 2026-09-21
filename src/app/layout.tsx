@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Poppins } from "next/font/google";
 import { ChatBubble } from "@/components/chat-bubble";
 import { DatesBar } from "@/components/dates-bar";
-import { DemoBanner } from "@/components/demo-banner";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -63,7 +62,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
         <div className="sticky top-0 z-40">
-          <DemoBanner />
           <DatesBar />
           <SiteHeader />
         </div>
