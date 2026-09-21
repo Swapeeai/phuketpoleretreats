@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { buildInstallmentPlan } from "@/lib/installments";
 import { formatEur, formatShortDate } from "@/lib/format";
 import { RETREAT, type Level, type Occupancy, type PaymentPlan, type RetreatPackage } from "@/lib/retreat";
 import { getVariant } from "@/lib/retreat";
+import { cn } from "@/lib/utils";
 
 type Props = {
   pkg: RetreatPackage;
@@ -44,8 +45,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
     [totalCents],
   );
 
-  async function onSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function submitBooking() {
     setError(null);
     setFieldError(null);
 
@@ -91,11 +91,17 @@ export function BookingForm({ pkg, cancelled }: Props) {
     }
   }
 
+  async function onSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    await submitBooking();
+  }
+
   return (
     <form onSubmit={onSubmit} className="space-y-6" noValidate>
       {error ? (
         <div
           role="alert"
+          data-testid="booking-error"
           className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
           {error}
@@ -106,18 +112,39 @@ export function BookingForm({ pkg, cancelled }: Props) {
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium">Occupancy</legend>
           <RadioGroup
-            value={occupancy || undefined}
-            onValueChange={(value) => setOccupancy((value as Occupancy) ?? "")}
+            value={occupancy}
+            onValueChange={(value) => {
+              if (value === "shared" || value === "solo") {
+                setOccupancy(value);
+                setError((current) =>
+                  current === "Choose Shared or Solo occupancy." ? null : current,
+                );
+                setFieldError((current) => (current === "occupancy" ? null : current));
+              }
+            }}
             className="grid gap-3 sm:grid-cols-2"
             aria-invalid={fieldError === "occupancy"}
           >
             {pkg.variants.map((item) => (
               <label
                 key={item.occupancy}
-                className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4 has-data-checked:border-primary has-data-checked:ring-2 has-data-checked:ring-primary/20"
+                data-testid={`occupancy-${item.occupancy}`}
+                onClick={() => {
+                  if (!item.occupancy) return;
+                  setOccupancy(item.occupancy);
+                  setError((current) =>
+                    current === "Choose Shared or Solo occupancy." ? null : current,
+                  );
+                  setFieldError((current) => (current === "occupancy" ? null : current));
+                }}
+                className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
+                  occupancy === item.occupancy
+                    ? "border-primary ring-2 ring-primary/20"
+                    : "border-border"
+                }`}
               >
                 <span className="flex items-center gap-2">
-                  <RadioGroupItem value={item.occupancy!} />
+                  <RadioGroupItem value={item.occupancy!} aria-label={item.occupancy ?? "package"} />
                   <span className="font-medium capitalize">{item.occupancy}</span>
                 </span>
                 <span className="pl-6 text-sm text-muted-foreground">
@@ -142,21 +169,41 @@ export function BookingForm({ pkg, cancelled }: Props) {
         <legend className="text-sm font-medium">Payment</legend>
         <RadioGroup
           value={paymentPlan}
-          onValueChange={(value) => setPaymentPlan(value as PaymentPlan)}
+          onValueChange={(value) => {
+            if (value === "full" || value === "installments") setPaymentPlan(value);
+          }}
           className="grid gap-3"
         >
-          <label className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4">
+          <label
+            data-testid="plan-full"
+            onClick={() => setPaymentPlan("full")}
+            className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
+              paymentPlan === "full" ? "border-primary ring-2 ring-primary/20" : "border-border"
+            }`}
+          >
             <span className="flex items-center gap-2">
-              <RadioGroupItem value="full" />
+              <RadioGroupItem value="full" aria-label="Pay in full" />
               <span className="font-medium">Pay in full</span>
             </span>
             <span className="pl-6 text-sm text-muted-foreground">
               Charge {totalCents ? formatEur(totalCents) : "the package total"} today on Stripe Checkout.
             </span>
           </label>
-          <label className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4">
+          <label
+            data-testid="plan-installments"
+            onClick={() => {
+              if (installment?.available !== false) setPaymentPlan("installments");
+            }}
+            className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
+              paymentPlan === "installments" ? "border-primary ring-2 ring-primary/20" : "border-border"
+            }`}
+          >
             <span className="flex items-center gap-2">
-              <RadioGroupItem value="installments" disabled={installment?.available === false} />
+              <RadioGroupItem
+                value="installments"
+                aria-label="Pay in installments"
+                disabled={installment?.available === false}
+              />
               <span className="font-medium">Pay in installments</span>
             </span>
             <span className="pl-6 text-sm text-muted-foreground">
@@ -196,7 +243,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             autoComplete="name"
-            required
+            className="h-10"
             aria-invalid={fieldError === "fullName"}
           />
         </div>
@@ -209,7 +256,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
-            required
+            className="h-10"
             aria-invalid={fieldError === "email"}
           />
         </div>
@@ -221,7 +268,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             autoComplete="tel"
-            required
+            className="h-10"
             aria-invalid={fieldError === "phone"}
           />
         </div>
@@ -233,6 +280,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             value={instagram}
             onChange={(e) => setInstagram(e.target.value)}
             placeholder="@you"
+            className="h-10"
           />
         </div>
       </div>
@@ -241,15 +289,23 @@ export function BookingForm({ pkg, cancelled }: Props) {
         <legend className="text-sm font-medium">Training level</legend>
         <RadioGroup
           value={level}
-          onValueChange={(value) => setLevel(value as Level)}
+          onValueChange={(value) => {
+            if (value === "Intermediate" || value === "Advanced" || value === "Pro") {
+              setLevel(value);
+            }
+          }}
           className="grid gap-2 sm:grid-cols-3"
         >
           {RETREAT.levels.map((item) => (
             <label
               key={item}
-              className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm"
+              data-testid={`level-${item}`}
+              onClick={() => setLevel(item)}
+              className={`flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-2 text-sm ${
+                level === item ? "border-primary ring-2 ring-primary/20" : "border-border"
+              }`}
             >
-              <RadioGroupItem value={item} />
+              <RadioGroupItem value={item} aria-label={item} />
               {item}
             </label>
           ))}
@@ -272,6 +328,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
           checked={acceptPolicy}
           onCheckedChange={(value) => setAcceptPolicy(Boolean(value))}
           className="mt-0.5"
+          aria-label="Accept cancellation policy"
         />
         <span>
           I have read the{" "}
@@ -282,13 +339,19 @@ export function BookingForm({ pkg, cancelled }: Props) {
         </span>
       </label>
 
-      <Button type="submit" size="lg" className="h-11 w-full sm:w-auto" disabled={submitting}>
+      <button
+        type="button"
+        data-testid="submit-booking"
+        className={cn(buttonVariants({ size: "lg" }), "h-11 w-full sm:w-auto disabled:opacity-50")}
+        disabled={submitting}
+        onClick={() => void submitBooking()}
+      >
         {submitting
           ? "Starting checkout…"
           : paymentPlan === "full"
             ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} on Stripe`
             : "Pay €500 deposit on Stripe"}
-      </Button>
+      </button>
     </form>
   );
 }
