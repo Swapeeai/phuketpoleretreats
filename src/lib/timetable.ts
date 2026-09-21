@@ -1,12 +1,6 @@
 /**
  * Official Pole Art Retreat 2027 workshop timetable.
- * Transcribed from the organiser’s timetable graphic (not the raw image on the page).
- *
- * Cells to double-check if anything looks off vs the original file:
- * - Fri 10:00–11:30 title “Static Rotation” (singular vs “Static Rotations”)
- * - Sun 14:45–16:15 and Sun 18:00–19:30 both read “Static Dynamic” for Karem
- *   (Advanced then Advanced-Pro — same title, two groups)
- * - Mon 10:30–12:00 title “Spin with Grace”
+ * The colourful graphic is shown as-is; this data is the screen-reader / SEO transcript.
  */
 
 export type WorkshopLevel = "Intermediate" | "Advanced" | "Advanced-Pro";

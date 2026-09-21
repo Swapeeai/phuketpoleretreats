@@ -40,7 +40,7 @@ Self-hosted in `public/images/` (see [IMAGE_CREDITS.md](./IMAGE_CREDITS.md)):
 
 Instagram: [@phuketpoleretreats](https://www.instagram.com/phuketpoleretreats) in the header, footer, and a gallery of official venue stills that link to the profile.
 
-The homepage **Workshop Timetable** is HTML (not a screenshot): 28 January–1 February 2027 workshops, hotel package 27 January–2 February 2027, with the Saturday 30 January boat trip called out in its own section.
+The homepage **Workshop Timetable** shows the official colourful timetable graphic (full-width, tap to open full size), with workshop dates 28 January–1 February 2027 and hotel package 27 January–2 February 2027. Saturday 30 January has its own boat-trip section.
 
 ## Stripe keys
 

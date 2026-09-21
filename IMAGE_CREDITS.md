@@ -27,6 +27,14 @@ Self-hosted JPEGs converted from photos already published on [phuketpoleretreats
 | `public/images/venue/pool.jpg` | Private infinity pool at sunset |
 | `public/images/venue/ocean-room.jpg` | Deluxe ocean-view room |
 
+## Workshop timetable (retreat graphic)
+
+The official colourful **PHUKET POLE RETREAT — Workshop Timetable** graphic, self-hosted from the same asset published on the live Squarespace site (`Screenshot 2026-09-11 at 15.19.52.png`). Displayed as-is on the homepage — not recreated in HTML.
+
+| File | Subject |
+| --- | --- |
+| `public/images/workshop-timetable.png` | Official 2027 workshop timetable (rainbow colour-coded classes) |
+
 ## Instagram
 
 Handle confirmed on the live site: [@phuketpoleretreats](https://www.instagram.com/phuketpoleretreats). Public post images were not downloadable without login/token (Instagram redirects the profile to login). The on-site gallery uses the official venue stills above, each linking to the Instagram profile. Original Instagram post files still need to be supplied if you want those exact frames.

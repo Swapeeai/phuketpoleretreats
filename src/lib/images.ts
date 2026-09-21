@@ -46,6 +46,13 @@ export const SCENERY = {
   },
 } as const;
 
+export const TIMETABLE = {
+  src: "/images/workshop-timetable.png",
+  alt: "Colour workshop timetable for the Phuket Pole Art Retreat 2027 — workshops 28 January to 1 February, hotel package 27 January to 2 February, classes with Karem Gutierrez, Adam Lin, Yvonne Smink and Jenny Liebert, boat trip 30 January, official checkout 2 February",
+  width: 1912,
+  height: 1266,
+} as const;
+
 /** Real Ayara Kamala / pole studio photos published on the live retreat site. */
 export const VENUE = {
   studio: {
