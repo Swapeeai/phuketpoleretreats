@@ -1,0 +1,294 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import { buildInstallmentPlan } from "@/lib/installments";
+import { formatEur, formatShortDate } from "@/lib/format";
+import { RETREAT, type Level, type Occupancy, type PaymentPlan, type RetreatPackage } from "@/lib/retreat";
+import { getVariant } from "@/lib/retreat";
+
+type Props = {
+  pkg: RetreatPackage;
+  cancelled?: boolean;
+};
+
+export function BookingForm({ pkg, cancelled }: Props) {
+  const router = useRouter();
+  const [occupancy, setOccupancy] = useState<Occupancy | "">(
+    pkg.includesHotel ? "" : "",
+  );
+  const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("installments");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [level, setLevel] = useState<Level | "">("");
+  const [roommateNotes, setRoommateNotes] = useState("");
+  const [acceptPolicy, setAcceptPolicy] = useState(false);
+  const [error, setError] = useState<string | null>(cancelled ? "Checkout was cancelled. Nothing was charged." : null);
+  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const selectedOccupancy = pkg.includesHotel ? (occupancy || null) : null;
+  const variant = getVariant(pkg, selectedOccupancy as Occupancy | null);
+  const totalCents = variant?.priceCents ?? null;
+  const installment = useMemo(
+    () => (totalCents ? buildInstallmentPlan(totalCents) : null),
+    [totalCents],
+  );
+
+  async function onSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+    setFieldError(null);
+
+    if (pkg.includesHotel && !occupancy) {
+      setFieldError("occupancy");
+      setError("Choose Shared or Solo occupancy.");
+      return;
+    }
+    if (!fullName.trim() || !email.trim() || !phone.trim() || !level || !acceptPolicy) {
+      setError("Fill in name, email, phone, level, and accept the cancellation policy.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          packageSlug: pkg.slug,
+          occupancy: pkg.includesHotel ? occupancy : null,
+          paymentPlan,
+          fullName,
+          email,
+          phone,
+          instagram,
+          level,
+          roommateNotes,
+          acceptPolicy,
+        }),
+      });
+      const data = (await response.json()) as { url?: string; error?: string; field?: string };
+      if (!response.ok || !data.url) {
+        setError(data.error || "We could not start checkout. Try again or message us on WhatsApp.");
+        setFieldError(data.field ?? null);
+        setSubmitting(false);
+        return;
+      }
+      router.push(data.url);
+    } catch {
+      setError("Network error — check your connection and try again.");
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-6" noValidate>
+      {error ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
+          {error}
+        </div>
+      ) : null}
+
+      {pkg.includesHotel ? (
+        <fieldset className="space-y-3">
+          <legend className="text-sm font-medium">Occupancy</legend>
+          <RadioGroup
+            value={occupancy || undefined}
+            onValueChange={(value) => setOccupancy((value as Occupancy) ?? "")}
+            className="grid gap-3 sm:grid-cols-2"
+            aria-invalid={fieldError === "occupancy"}
+          >
+            {pkg.variants.map((item) => (
+              <label
+                key={item.occupancy}
+                className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4 has-data-checked:border-primary has-data-checked:ring-2 has-data-checked:ring-primary/20"
+              >
+                <span className="flex items-center gap-2">
+                  <RadioGroupItem value={item.occupancy!} />
+                  <span className="font-medium capitalize">{item.occupancy}</span>
+                </span>
+                <span className="pl-6 text-sm text-muted-foreground">
+                  {formatEur(item.priceCents)}
+                </span>
+              </label>
+            ))}
+          </RadioGroup>
+          <p className="text-sm text-muted-foreground">
+            Shared is with another retreat guest (tell us who, or we can match you). Solo is the room
+            to yourself — or with a non-poler, who stays free.
+          </p>
+        </fieldset>
+      ) : (
+        <p className="rounded-lg bg-muted px-4 py-3 text-sm">
+          Workshops only — {formatEur(pkg.fromCents)}. You book your own hotel and transport to Ayara
+          Kamala.
+        </p>
+      )}
+
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-medium">Payment</legend>
+        <RadioGroup
+          value={paymentPlan}
+          onValueChange={(value) => setPaymentPlan(value as PaymentPlan)}
+          className="grid gap-3"
+        >
+          <label className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4">
+            <span className="flex items-center gap-2">
+              <RadioGroupItem value="full" />
+              <span className="font-medium">Pay in full</span>
+            </span>
+            <span className="pl-6 text-sm text-muted-foreground">
+              Charge {totalCents ? formatEur(totalCents) : "the package total"} today on Stripe Checkout.
+            </span>
+          </label>
+          <label className="flex cursor-pointer flex-col gap-1 rounded-xl border border-border bg-card p-4">
+            <span className="flex items-center gap-2">
+              <RadioGroupItem value="installments" disabled={installment?.available === false} />
+              <span className="font-medium">Pay in installments</span>
+            </span>
+            <span className="pl-6 text-sm text-muted-foreground">
+              {installment?.available
+                ? installment.summary
+                : installment?.reason ?? "Choose occupancy to see the monthly schedule."}
+            </span>
+          </label>
+        </RadioGroup>
+        {paymentPlan === "installments" && installment?.available ? (
+          <ol className="space-y-2 rounded-xl bg-muted/70 p-4 text-sm">
+            {installment.charges.map((charge) => (
+              <li key={`${charge.label}-${charge.isoDate}`} className="flex justify-between gap-4">
+                <span>
+                  {charge.label === "deposit" ? "Deposit today" : "Automatic monthly"} ·{" "}
+                  {formatShortDate(charge.isoDate)}
+                </span>
+                <span className="font-medium">{formatEur(charge.amountCents)}</span>
+              </li>
+            ))}
+          </ol>
+        ) : null}
+        <p className="text-xs text-muted-foreground">
+          Live site copy was “DEPOSIT option, pay 500 EUR upon booking and the remaining payment up
+          to 60 days before the start of the retreat.” Stripe now takes that remaining balance on a
+          monthly schedule so Tara and Jenny do not chase invoices. Last automatic charge is on or
+          before {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
+        </p>
+      </fieldset>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="fullName">Full name</Label>
+          <Input
+            id="fullName"
+            name="fullName"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            autoComplete="name"
+            required
+            aria-invalid={fieldError === "fullName"}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+            aria-invalid={fieldError === "email"}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="phone">Phone / WhatsApp</Label>
+          <Input
+            id="phone"
+            name="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            autoComplete="tel"
+            required
+            aria-invalid={fieldError === "phone"}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="instagram">Instagram (optional)</Label>
+          <Input
+            id="instagram"
+            name="instagram"
+            value={instagram}
+            onChange={(e) => setInstagram(e.target.value)}
+            placeholder="@you"
+          />
+        </div>
+      </div>
+
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-medium">Training level</legend>
+        <RadioGroup
+          value={level}
+          onValueChange={(value) => setLevel(value as Level)}
+          className="grid gap-2 sm:grid-cols-3"
+        >
+          {RETREAT.levels.map((item) => (
+            <label
+              key={item}
+              className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm"
+            >
+              <RadioGroupItem value={item} />
+              {item}
+            </label>
+          ))}
+        </RadioGroup>
+      </fieldset>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="roommateNotes">Roommate or sharing notes (optional)</Label>
+        <Textarea
+          id="roommateNotes"
+          value={roommateNotes}
+          onChange={(e) => setRoommateNotes(e.target.value)}
+          placeholder="Who you are sharing with, or ask us to match you with another solo guest."
+          className="min-h-20"
+        />
+      </div>
+
+      <label className="flex items-start gap-3 text-sm">
+        <Checkbox
+          checked={acceptPolicy}
+          onCheckedChange={(value) => setAcceptPolicy(Boolean(value))}
+          className="mt-0.5"
+        />
+        <span>
+          I have read the{" "}
+          <Link href="/cancellation" className="underline underline-offset-2">
+            cancellation policy
+          </Link>
+          . Bookings are non-refundable.
+        </span>
+      </label>
+
+      <Button type="submit" size="lg" className="h-11 w-full sm:w-auto" disabled={submitting}>
+        {submitting
+          ? "Starting checkout…"
+          : paymentPlan === "full"
+            ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} on Stripe`
+            : "Pay €500 deposit on Stripe"}
+      </Button>
+    </form>
+  );
+}
