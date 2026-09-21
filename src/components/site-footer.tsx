@@ -1,14 +1,17 @@
 import Link from "next/link";
+import { LIVE } from "@/lib/live-copy";
 import { CONTACT_EMAIL, INSTAGRAM_URL, WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-[#1c1410] text-[#f6efe6]">
+    <footer className="mt-auto border-t border-white/10 bg-[#0e0e0e] text-white">
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
-          <p className="font-heading text-2xl">Phuket Pole Retreats</p>
-          <p className="mt-2 text-sm text-[#f6efe6]/70">
-            Pole Art Retreat at Ayara Kamala Resort & Spa. 28 January – 1 February 2027.
+          <p className="font-heading text-2xl">{LIVE.siteName}</p>
+          <p className="mt-2 text-sm text-white/70">
+            {LIVE.heroDates}
+            <br />
+            Ayara Kamala Resort & Spa, Phuket
           </p>
         </div>
         <div className="text-sm">
@@ -31,7 +34,7 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-col gap-2 text-sm">
           <Link className="hover:underline" href="/book">
-            Book now
+            {LIVE.bookNow}
           </Link>
           <Link className="hover:underline" href="/faqs">
             FAQs

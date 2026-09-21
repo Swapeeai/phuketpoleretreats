@@ -9,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { LIVE } from "@/lib/live-copy";
 import { IMG } from "@/lib/retreat";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +23,7 @@ const NAV = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -32,22 +33,20 @@ export function SiteHeader() {
             height={44}
             className="size-11 rounded-full object-cover"
           />
-          <span className="font-heading text-lg tracking-tight sm:text-xl">
-            Phuket Pole Retreats
-          </span>
+          <span className="font-heading text-lg tracking-tight sm:text-xl">{LIVE.siteName}</span>
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm text-[#3e3e3e] transition-colors hover:text-foreground"
             >
               {item.label}
             </Link>
           ))}
-          <Link href="/book" className={cn(buttonVariants({ size: "lg" }))}>
-            Book your spot
+          <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-full px-5")}>
+            {LIVE.bookNow}
           </Link>
         </nav>
         <Sheet>
@@ -67,8 +66,8 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
-              <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "mt-2")}>
-                Book your spot
+              <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 rounded-full")}>
+                {LIVE.bookNow}
               </Link>
             </nav>
           </SheetContent>

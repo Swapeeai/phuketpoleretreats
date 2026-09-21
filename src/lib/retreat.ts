@@ -215,28 +215,40 @@ export const INSTRUCTORS = [
     handle: "@yvonnesmink",
     url: "https://www.instagram.com/yvonnesmink/",
     image: IMG.yvonne,
-    bio: "Yvonne Smink is a Dutch pole dance artist, instructor, and 2014 Dutch Pole Champion. She came to pole in 2011 from a wall-climbing background and has trained largely self-taught, developing a distinctive style rooted in her own body and movement. Known for spinning and inversion combos, handstand work, and connecting with dancers at every level, she brings technical depth and genuine warmth. Her choreography is deeply personal — she describes her performances as taking a piece of herself and turning it into movement on stage.",
+    bio: [
+      "Yvonne Smink is a Dutch pole dance artist, instructor, and 2014 Dutch Pole Champion. She came to pole in 2011 from a wall-climbing background. Since then she's trained largely self-taught, developing a distinctive style rooted in her own body and movement.",
+      "Known for her spinning and inversion combos, handstand work, and her ability to connect with dancers at every level, she brings both technical depth and genuine warmth to her teaching. Her choreography is deeply personal — she describes her performances as taking a piece of herself, whatever she's feeling or working through, and turning it into movement on stage.",
+    ],
   },
   {
     name: "Adam Lin",
     handle: "@apolelin",
     url: "https://www.instagram.com/apolelin/",
     image: IMG.adam,
-    bio: "Adam Lin is one of the most decorated pole competitors in the world. A two-time Mr. Pole Dance World champion, two-time Pole Icon Global winner (2022 & 2026), Australian Pole Champion, and 2019 Overall Champion of Pole Theatre UK & HK, his titles span over a decade at the highest level. Off the competition floor, Adam is the founder of Haus of Icons, a coaching brand for pole performers and competitors ready to elevate their craft.",
+    bio: [
+      "Adam Lin is one of the most decorated pole competitors in the world. A two-time Mr. Pole Dance World champion, two-time Pole Icon Global winner (2022 & 2026), Australian Pole Champion, and 2019 Overall Champion of Pole Theatre UK & HK, his titles span over a decade of international competition at the highest level.",
+      "Off the competition floor, Adam is the founder of Haus of Icons, a premium coaching brand built specifically for pole performers and competitors ready to elevate their craft. His mission has always been the same: help every pole dancer find themselves and perform like they were born to.",
+    ],
   },
   {
     name: "Karem Gutierrez",
     handle: "@karemgutierrez",
     url: "https://www.instagram.com/karemgutierrez/",
     image: IMG.karem,
-    bio: "Karem Gutierrez comes from Caracas, Venezuela, currently living in Barcelona, and has been a pole dance artist since 2014. She has more than nine years of experience as an instructor for all levels and as a competitor trainer. She is two-time champion in Women’s Elite of Pole Spain 2022–2023, champion in Women’s Exotic Pro at Catalunya Pole 2023 (highest score of the entire competition), and Pole Art International 2023 Storyteller Elite champion.",
+    bio: [
+      "Karem Gutierrez comes from Caracas, Venezuela, currently living in Barcelona and has been a pole dance artist since 2014. She has more than 9 years of experience as a pole dance instructor for all levels and as a competitor trainer.",
+      "Karem has won multiple international competitions. She is two-time champion in Women's Elite of the Pole Spain 2022-2023 competition, champion in the Women's Exotic Pro in the Catalunya Pole 2023, obtaining the highest score of the entire competition as well as in the Pole Art International 2023 in the Storyteller Elite category.",
+    ],
   },
   {
     name: "Jenny Liebert",
     handle: "@jenny_pole_phuket",
     url: "https://www.instagram.com/jenny_pole_phuket/",
     image: IMG.jenny,
-    bio: "With a background in gymnastics and contortion, Jenny has been part of the pole dance industry for over 16 years, teaching internationally and organising training camps around the world. Known for attention to detail, refined technique, and an expressive approach, she helps students reach their full potential. She has expanded her teaching to include exotic dance and expressive movement, with recent influence from Russian acro-style — fluid floorwork, acrobatics, and dance.",
+    bio: [
+      "With a background in gymnastics and contortion, Jenny has been part of the pole dance industry for over 16 years, teaching internationally and organizing training camps around the world. Known for her attention to detail, refined technique, and expressive approach, she helps students reach their full potential in every aspect of pole artistry.",
+      "Over the years, Jenny has expanded her teaching to include exotic dance and expressive movement, developing a distinctive fusion of acrobatic and dance styles. Her most recent influence comes from Russian acro-style, combining fluid floorwork, acrobatics, and dance.",
+    ],
   },
 ];
 
@@ -250,8 +262,8 @@ export const FAQS = [
     a: "Two 90-minute workshops per day across four days, back to back with a short break — 12 hours in total. Your schedule and welcome pack are emailed a few months before the retreat.",
   },
   {
-    q: "How do payments work now?",
-    a: "Pay in full today, or pay a €500 deposit today and have Stripe automatically bill the remaining balance monthly until it is paid — finishing by 28 November 2026 (60 days before check-in). You no longer need to remember later instalments; the card on file is charged on the schedule shown at checkout. Bookings are non-refundable.",
+    q: "How do payments work?",
+    a: "Pay in full today, or pay 500 EUR upon booking and the remaining payment in monthly instalments, finishing up to 60 days before the start of the retreat (28 November 2026). Bookings are non-refundable.",
   },
   {
     q: "What should I pack?",

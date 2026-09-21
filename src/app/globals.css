@@ -49,30 +49,31 @@
 }
 
 :root {
-  --background: oklch(0.97 0.012 80);
-  --foreground: oklch(0.24 0.03 50);
-  --card: oklch(0.99 0.008 80);
-  --card-foreground: oklch(0.24 0.03 50);
-  --popover: oklch(0.99 0.008 80);
-  --popover-foreground: oklch(0.24 0.03 50);
-  --primary: oklch(0.48 0.12 32);
-  --primary-foreground: oklch(0.98 0.01 80);
-  --secondary: oklch(0.93 0.02 75);
-  --secondary-foreground: oklch(0.28 0.03 50);
-  --muted: oklch(0.94 0.015 80);
-  --muted-foreground: oklch(0.48 0.03 55);
-  --accent: oklch(0.93 0.03 70);
-  --accent-foreground: oklch(0.28 0.03 50);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  /* Live Squarespace palette: white, near-black, coral #f0523d, cyan #00b2ff */
+  --background: #ffffff;
+  --foreground: #0e0e0e;
+  --card: #ffffff;
+  --card-foreground: #0e0e0e;
+  --popover: #ffffff;
+  --popover-foreground: #0e0e0e;
+  --primary: #f0523d;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f6f6;
+  --secondary-foreground: #0e0e0e;
+  --muted: #f6f6f6;
+  --muted-foreground: #3e3e3e;
+  --accent: #fff1ee;
+  --accent-foreground: #0e0e0e;
+  --destructive: #f0523d;
+  --border: #e7e7e7;
+  --input: #e7e7e7;
+  --ring: #f0523d;
+  --chart-1: #f0523d;
+  --chart-2: #00b2ff;
+  --chart-3: #272727;
+  --chart-4: #0e0e0e;
+  --chart-5: #00b2ff;
+  --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -130,5 +131,44 @@
   h1, h2, h3 {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-copy {
+  animation: fade-up 0.9s ease-out both;
+}
+.hero-copy:nth-child(1) { animation-delay: 0.05s; }
+.hero-copy:nth-child(2) { animation-delay: 0.15s; }
+.hero-copy:nth-child(3) { animation-delay: 0.25s; }
+.hero-copy:nth-child(4) { animation-delay: 0.35s; }
+.hero-copy:nth-child(5) { animation-delay: 0.45s; }
+
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy,
+  .marquee {
+    animation: none;
   }
 }

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "FAQs",
   description:
-    "Levels, packing, meals, sharing a room, and how the €500 Stripe deposit plus automatic monthly payments work for Phuket Pole Retreats 2027.",
+    "Levels, packing, meals, sharing a room, and how to pay in full or with a €500 deposit and monthly payments for Phuket Pole Retreats 2027.",
   alternates: { canonical: "/faqs" },
 };
 

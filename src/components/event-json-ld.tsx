@@ -1,4 +1,5 @@
 import { PACKAGES, RETREAT } from "@/lib/retreat";
+import { LIVE } from "@/lib/live-copy";
 import { SITE_URL } from "@/lib/site";
 import { formatEur } from "@/lib/format";
 
@@ -7,8 +8,7 @@ export function EventJsonLd() {
     "@context": "https://schema.org",
     "@type": "Event",
     name: RETREAT.name,
-    description:
-      "Pole art retreat in Kamala, Phuket with Yvonne Smink, Adam Lin, Karem Gutierrez and Jenny Liebert. 12 hours of workshops at Ayara Kamala Resort & Spa, 28 January–1 February 2027.",
+    description: LIVE.uniqueExperience,
     startDate: RETREAT.workshopsStartIso,
     endDate: RETREAT.workshopsEndIso,
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -36,7 +36,7 @@ export function EventJsonLd() {
       priceCurrency: "EUR",
       url: `${SITE_URL}/book/${pkg.slug}`,
       availability: "https://schema.org/InStock",
-      description: `From ${formatEur(pkg.fromCents)}. €500 deposit or pay in full.`,
+      description: `From ${formatEur(pkg.fromCents)}. Pay in full, or €500 deposit today and monthly payments after.`,
     })),
   };
 

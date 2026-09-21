@@ -106,7 +106,7 @@ export function buildInstallmentPlan(
     charges,
     firstMonthlyUnix: Math.floor(monthlyDates[0].getTime() / 1000),
     cancelAtUnix: Math.floor(lastMonthly.getTime() / 1000) + 3 * 24 * 60 * 60,
-    summary: `€500 deposit today, then ${monthlyCount} automatic monthly payment${monthlyCount === 1 ? "" : "s"} (${monthlyLabel}) until the balance is paid.`,
+    summary: `€500 deposit today, then ${monthlyCount} monthly payment${monthlyCount === 1 ? "" : "s"} (${monthlyLabel}) for the remaining balance.`,
   };
 }
 

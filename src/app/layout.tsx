@@ -9,7 +9,7 @@ import "./globals.css";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | Phuket Pole Retreats",
   },
   description:
-    "Book the Phuket Pole Art Retreat, 28 January–1 February 2027 at Ayara Kamala Resort & Spa. 12 hours with Yvonne Smink, Adam Lin, Karem Gutierrez and Jenny Liebert. Pay in full or €500 deposit plus automatic monthly Stripe payments.",
+    "The Pole Art Retreat is a unique training experience designed to help dancers explore the connection between pole, movement, and self-expression. 28th January - 1st of February 2027 at Ayara Kamala Resort & Spa, Phuket. Pay in full, or €500 deposit today and monthly payments after.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     title: "Phuket Pole Retreats 2027 | Pole Art Retreat at Ayara Kamala",
     description:
-      "Pole art retreat in Kamala, Phuket. Workshops 28 January–1 February 2027. Pay in full or €500 deposit with automatic monthly balance.",
+      "More than just a pole camp, it’s a creative journey through flow, artistry, and personal discovery. 28th January - 1st of February 2027, Ayara Kamala, Phuket.",
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },

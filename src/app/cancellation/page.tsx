@@ -14,8 +14,8 @@ export default function CancellationPage() {
       <h1 className="text-4xl">Cancellation policy</h1>
       <p className="text-muted-foreground">Last updated: 10 November 2025 (aligned with the live site).</p>
       <p>
-        Unforeseen circumstances happen. This policy is the same as the live site: bookings are
-        non-refundable, whether you paid in full or by Stripe installments.
+        Unforeseen circumstances happen. Bookings are non-refundable, whether you paid in full or
+        with a €500 deposit and monthly payments.
       </p>
       <h2 className="text-2xl">Cancellation by you</h2>
       <ul className="list-disc space-y-2 pl-5">

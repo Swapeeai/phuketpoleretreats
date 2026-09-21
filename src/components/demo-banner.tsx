@@ -6,9 +6,9 @@ export function DemoBanner() {
   }
 
   return (
-    <div className="bg-[#5c2a24] px-4 py-2 text-center text-sm text-[#f6efe6]">
-      Demo payments are on because Stripe keys are not set. You can still walk through pay in full
-      and installments, then add your Stripe keys locally.
+    <div className="bg-[#0e0e0e] px-4 py-2 text-center text-sm text-white">
+      Demo checkout is on — nothing is charged. You can still pay in full, or put €500 down and
+      continue with monthly payments.
     </div>
   );
 }

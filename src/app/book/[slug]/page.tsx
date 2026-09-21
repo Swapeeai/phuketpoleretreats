@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!pkg) return { title: "Package not found" };
   return {
     title: `Book ${pkg.title}`,
-    description: `${pkg.description} From ${formatEur(pkg.fromCents)}. Pay in full or €500 deposit plus automatic monthly Stripe payments.`,
+    description: `${pkg.description} From ${formatEur(pkg.fromCents)}. Pay in full, or €500 deposit today and monthly payments after.`,
     alternates: { canonical: `/book/${pkg.slug}` },
   };
 }
@@ -61,11 +61,10 @@ export default async function PackagePage({ params, searchParams }: Props) {
           </p>
         ))}
       </div>
-      <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-        <h2 className="text-2xl">Checkout</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Stripe charges the card you save. Installments are automatic — we will not chase monthly
-          payments.
+      <div className="border border-border bg-white p-5 sm:p-6">
+        <h2 className="text-2xl">Reserve your spot</h2>
+        <p className="mt-2 text-sm leading-relaxed text-[#272727]">
+          Pay in full, or €500 deposit today and monthly payments after.
         </p>
         <div className="mt-6">
           <BookingForm pkg={pkg} cancelled={checkout === "cancelled"} />

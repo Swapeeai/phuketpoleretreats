@@ -89,7 +89,7 @@ function MockCheckoutInner() {
             {plan.charges.map((charge) => (
               <li key={charge.isoDate} className="flex justify-between">
                 <span>
-                  {charge.label === "deposit" ? "Deposit today" : "Auto monthly"} ·{" "}
+                  {charge.label === "deposit" ? "€500 deposit today" : "Monthly payment"} ·{" "}
                   {formatShortDate(charge.isoDate)}
                 </span>
                 <span>{formatEur(charge.amountCents)}</span>

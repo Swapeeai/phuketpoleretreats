@@ -137,7 +137,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
                   );
                   setFieldError((current) => (current === "occupancy" ? null : current));
                 }}
-                className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
+                className={`flex cursor-pointer flex-col gap-1 border bg-white p-4 ${
                   occupancy === item.occupancy
                     ? "border-primary ring-2 ring-primary/20"
                     : "border-border"
@@ -166,59 +166,73 @@ export function BookingForm({ pkg, cancelled }: Props) {
       )}
 
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">Payment</legend>
+        <legend className="font-heading text-xl">How would you like to pay?</legend>
+        <p className="text-sm leading-relaxed text-[#272727]">
+          Pay in full, or €500 deposit today and monthly payments after — finishing by{" "}
+          {formatShortDate(RETREAT.balanceDeadlineIso)}, 60 days before the retreat.
+        </p>
         <RadioGroup
           value={paymentPlan}
           onValueChange={(value) => {
             if (value === "full" || value === "installments") setPaymentPlan(value);
           }}
-          className="grid gap-3"
+          className="grid gap-3 sm:grid-cols-2"
         >
           <label
             data-testid="plan-full"
             onClick={() => setPaymentPlan("full")}
-            className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
-              paymentPlan === "full" ? "border-primary ring-2 ring-primary/20" : "border-border"
+            className={`flex cursor-pointer flex-col gap-2 border bg-white p-5 transition-shadow ${
+              paymentPlan === "full"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(240,82,61,0.08)]"
+                : "border-border hover:border-primary/40"
             }`}
           >
             <span className="flex items-center gap-2">
               <RadioGroupItem value="full" aria-label="Pay in full" />
-              <span className="font-medium">Pay in full</span>
+              <span className="text-sm font-medium uppercase tracking-[0.12em] text-primary">
+                Pay in full
+              </span>
             </span>
-            <span className="pl-6 text-sm text-muted-foreground">
-              Charge {totalCents ? formatEur(totalCents) : "the package total"} today on Stripe Checkout.
+            <span className="pl-6 font-heading text-3xl">
+              {totalCents ? formatEur(totalCents) : "Package total"}
             </span>
+            <span className="pl-6 text-sm text-[#3e3e3e]">Pay the package total today.</span>
           </label>
           <label
             data-testid="plan-installments"
             onClick={() => {
               if (installment?.available !== false) setPaymentPlan("installments");
             }}
-            className={`flex cursor-pointer flex-col gap-1 rounded-xl border bg-card p-4 ${
-              paymentPlan === "installments" ? "border-primary ring-2 ring-primary/20" : "border-border"
+            className={`flex cursor-pointer flex-col gap-2 border bg-white p-5 transition-shadow ${
+              paymentPlan === "installments"
+                ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(240,82,61,0.08)]"
+                : "border-border hover:border-primary/40"
             }`}
           >
             <span className="flex items-center gap-2">
               <RadioGroupItem
                 value="installments"
-                aria-label="Pay in installments"
+                aria-label="€500 deposit today and monthly payments after"
                 disabled={installment?.available === false}
               />
-              <span className="font-medium">Pay in installments</span>
+              <span className="text-sm font-medium uppercase tracking-[0.12em] text-primary">
+                Deposit today
+              </span>
             </span>
-            <span className="pl-6 text-sm text-muted-foreground">
+            <span className="pl-6 font-heading text-3xl">€500</span>
+            <span className="pl-6 text-sm text-[#3e3e3e]">
               {installment?.available
                 ? installment.summary
-                : installment?.reason ?? "Choose occupancy to see the monthly schedule."}
+                : installment?.reason ?? "Choose occupancy to see the monthly payments."}
             </span>
           </label>
         </RadioGroup>
         {paymentPlan === "installments" && installment?.available ? (
-          <ol className="space-y-2 rounded-xl bg-muted/70 p-4 text-sm">
+          <ol className="space-y-2 border border-border bg-[#fafafa] p-4 text-sm">
             {installment.charges.map((charge) => (
               <li key={`${charge.label}-${charge.isoDate}`} className="flex justify-between gap-4">
                 <span>
-                  {charge.label === "deposit" ? "Deposit today" : "Automatic monthly"} ·{" "}
+                  {charge.label === "deposit" ? "€500 deposit today" : "Monthly payment"} ·{" "}
                   {formatShortDate(charge.isoDate)}
                 </span>
                 <span className="font-medium">{formatEur(charge.amountCents)}</span>
@@ -226,11 +240,10 @@ export function BookingForm({ pkg, cancelled }: Props) {
             ))}
           </ol>
         ) : null}
-        <p className="text-xs text-muted-foreground">
-          Live site copy was “DEPOSIT option, pay 500 EUR upon booking and the remaining payment up
-          to 60 days before the start of the retreat.” Stripe now takes that remaining balance on a
-          monthly schedule so Tara and Jenny do not chase invoices. Last automatic charge is on or
-          before {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
+        <p className="text-xs leading-relaxed text-[#3e3e3e]">
+          DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before
+          the start of the retreat. Last monthly payment is on or before{" "}
+          {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
         </p>
       </fieldset>
 
@@ -301,7 +314,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
               key={item}
               data-testid={`level-${item}`}
               onClick={() => setLevel(item)}
-              className={`flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-2 text-sm ${
+              className={`flex cursor-pointer items-center gap-2 border bg-white px-3 py-2 text-sm ${
                 level === item ? "border-primary ring-2 ring-primary/20" : "border-border"
               }`}
             >
@@ -342,15 +355,15 @@ export function BookingForm({ pkg, cancelled }: Props) {
       <button
         type="button"
         data-testid="submit-booking"
-        className={cn(buttonVariants({ size: "lg" }), "h-11 w-full sm:w-auto disabled:opacity-50")}
+        className={cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-full sm:w-auto disabled:opacity-50")}
         disabled={submitting}
         onClick={() => void submitBooking()}
       >
         {submitting
           ? "Starting checkout…"
           : paymentPlan === "full"
-            ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} on Stripe`
-            : "Pay €500 deposit on Stripe"}
+            ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} today`
+            : "Pay €500 deposit today"}
       </button>
     </form>
   );

@@ -33,8 +33,9 @@ export default function PrivacyPage() {
       </ul>
       <h2 className="text-2xl">How we use it</h2>
       <p>
-        To fulfil bookings, process payments (including automatic monthly installments), send
-        itinerary and logistics, and — if you do not opt out — occasional updates about retreats.
+        To fulfil bookings, process payments (including pay in full or a €500 deposit with monthly
+        payments), send itinerary and logistics, and — if you do not opt out — occasional updates
+        about retreats.
       </p>
       <h2 className="text-2xl">Sharing</h2>
       <p>
