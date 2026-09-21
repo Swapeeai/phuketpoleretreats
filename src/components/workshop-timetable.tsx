@@ -32,9 +32,8 @@ export function WorkshopTimetable() {
               width={TIMETABLE.width}
               height={TIMETABLE.height}
               sizes="(max-width: 1152px) 100vw, 1152px"
-              quality={95}
+              unoptimized
               className="h-auto w-full"
-              priority={false}
             />
           </a>
           <figcaption className="mt-3 text-center text-xs text-muted-foreground">
