@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BoatDay } from "@/components/boat-day";
-import { DatesCallout } from "@/components/dates-callout";
 import { FaqList } from "@/components/faq-list";
 import { HeroVideo } from "@/components/hero-video";
 import { InstagramGallery } from "@/components/instagram-gallery";
@@ -94,14 +93,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-background px-4 py-10 sm:px-6">
-        <DatesCallout className="mx-auto max-w-3xl" />
-      </section>
-
       <ScenicSection
         id="levels"
-        src={SCENERY.phiPhiLongtails.src}
-        alt={SCENERY.phiPhiLongtails.alt}
+        src={SCENERY.turquoiseLongtail.src}
+        alt={SCENERY.turquoiseLongtail.alt}
+        overlayClassName="bg-gradient-to-b from-sky/50 via-white/58 to-sky/55"
       >
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <h2 id="pole-art-heading" className="sr-only">

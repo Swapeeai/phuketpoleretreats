@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Poppins } from "next/font/google";
 import { ChatBubble } from "@/components/chat-bubble";
+import { DatesBar } from "@/components/dates-bar";
 import { DemoBanner } from "@/components/demo-banner";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
@@ -61,8 +62,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
-        <DemoBanner />
-        <SiteHeader />
+        <div className="sticky top-0 z-40">
+          <DemoBanner />
+          <DatesBar />
+          <SiteHeader />
+        </div>
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <ChatBubble />

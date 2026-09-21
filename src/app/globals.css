@@ -188,6 +188,7 @@
 #dates,
 #levels,
 #timetable,
-#boat-trip {
-  scroll-margin-top: 5.5rem;
+#boat-trip,
+#instructors {
+  scroll-margin-top: 11rem;
 }

@@ -2,11 +2,11 @@ import { INSTAGRAM_URL } from "@/lib/site";
 
 /** Self-hosted scenery: Unsplash License (https://unsplash.com/license). */
 export const SCENERY = {
-  phiPhiLongtails: {
-    src: "/images/phuket/phi-phi-longtails.jpg",
-    alt: "Thai longtail boats on a tropical beach beneath green limestone cliffs — classic Andaman Sea scene",
-    credit: "Unsplash License, photo 1552465011-b4e21bf6e79a (Phi Phi Islands longtail boats)",
-    href: "https://unsplash.com/photos/1552465011-b4e21bf6e79a",
+  turquoiseLongtail: {
+    src: "/images/phuket/turquoise-longtail.jpg",
+    alt: "Thai longtail boat in bright turquoise water under a sunny sky — Phi Phi Islands, Thailand",
+    credit: "Karl Moore (@karl333) — Unsplash License, photo 3nBrnV1u1lc",
+    href: "https://unsplash.com/photos/3nBrnV1u1lc",
   },
   longtailLagoon: {
     src: "/images/phuket/longtail-lagoon.jpg",

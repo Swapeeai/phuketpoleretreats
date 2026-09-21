@@ -6,7 +6,7 @@ Free to use, including commercially, without permission. Attribution is not requ
 
 | File | Subject | Photographer | Photo |
 | --- | --- | --- | --- |
-| `public/images/phuket/phi-phi-longtails.jpg` | Thai longtail boats and limestone cliffs (Phi Phi / Andaman) | Unsplash contributor | [1552465011-b4e21bf6e79a](https://unsplash.com/photos/1552465011-b4e21bf6e79a) |
+| `public/images/phuket/turquoise-longtail.jpg` | Thai longtail boat in bright turquoise water, Phi Phi | Karl Moore ([@karl333](https://unsplash.com/@karl333)) | [3nBrnV1u1lc](https://unsplash.com/photos/3nBrnV1u1lc) |
 | `public/images/phuket/longtail-lagoon.jpg` | Longtail boats in a turquoise lagoon under a green cliff | Prakasam Mathaiyan ([@iamprakasam](https://unsplash.com/@iamprakasam)) | [poMDxMaQuHo](https://unsplash.com/photos/poMDxMaQuHo) |
 | `public/images/phuket/kamala-islands.jpg` | Islands off Kamala, Phuket | Max Bvp ([@maxbvp](https://unsplash.com/@maxbvp)) | [Bqlh027ARn0](https://unsplash.com/photos/Bqlh027ARn0) |
 | `public/images/phuket/phuket-sunset.jpg` | Sunset, Phuket | Mikk Tõnissoo ([@themikk](https://unsplash.com/@themikk)) | [jc_7ETQJCBY](https://unsplash.com/photos/jc_7ETQJCBY) |
