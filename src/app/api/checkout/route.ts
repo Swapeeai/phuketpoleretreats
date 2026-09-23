@@ -70,7 +70,6 @@ export async function POST(request: Request) {
         mode: "payment",
         customer_email: booking.email,
         phone_number_collection: { enabled: true },
-        allow_promotion_codes: true,
         success_url: successUrl,
         cancel_url: cancelUrl,
         metadata,
@@ -113,7 +112,6 @@ export async function POST(request: Request) {
       mode: "subscription",
       customer_email: booking.email,
       phone_number_collection: { enabled: true },
-      allow_promotion_codes: true,
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: {
