@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -43,6 +47,17 @@ const NAV = [
 ];
 
 export function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close the mobile drawer whenever the route changes (covers same-page hash
+  // links like /#instructors as well as full navigations).
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header className="border-b border-border/60 bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -79,7 +94,7 @@ export function SiteHeader() {
             {LIVE.bookNow}
           </Link>
         </nav>
-        <Sheet>
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger
             className={cn(buttonVariants({ variant: "outline", size: "icon" }), "md:hidden")}
             aria-label="Open menu"
@@ -92,7 +107,7 @@ export function SiteHeader() {
             </SheetHeader>
             <nav className="flex flex-col gap-3 px-4">
               {NAV.map((item) => (
-                <Link key={item.href} href={item.href} className="py-1 text-base">
+                <Link key={item.href} href={item.href} className="py-1 text-base" onClick={closeMenu}>
                   {item.label}
                 </Link>
               ))}
@@ -101,10 +116,15 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="py-1 text-base"
+                onClick={closeMenu}
               >
                 Instagram @{INSTAGRAM_HANDLE}
               </a>
-              <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 rounded-full")}>
+              <Link
+                href="/book"
+                className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 rounded-full")}
+                onClick={closeMenu}
+              >
                 {LIVE.bookNow}
               </Link>
             </nav>
