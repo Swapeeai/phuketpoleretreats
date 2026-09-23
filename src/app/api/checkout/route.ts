@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import { validateBooking } from "@/lib/validate-booking";
 import { buildInstallmentPlan } from "@/lib/installments";
@@ -100,6 +101,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Could not build a monthly schedule." }, { status: 400 });
     }
 
+    // Deposit today + monthly balance in one Checkout subscription session.
+    //
+    // The recurring price is put on a free trial until the first monthly date, so
+    // Stripe does NOT charge it today. The €500 deposit is a one-time line item,
+    // which Checkout charges on the subscription's initial invoice (today). Using a
+    // trial_end avoids the "billing_cycle_anchor in the future" conflict that made
+    // the earlier configuration fail.
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: booking.email,
@@ -113,8 +121,7 @@ export async function POST(request: Request) {
         cancelAtUnix: String(plan.cancelAtUnix),
       },
       subscription_data: {
-        billing_cycle_anchor: plan.firstMonthlyUnix,
-        proration_behavior: "none",
+        trial_end: plan.firstMonthlyUnix,
         metadata: {
           ...metadata,
           monthlyCount: String(plan.monthlyCount),
@@ -127,17 +134,6 @@ export async function POST(request: Request) {
           quantity: 1,
           price_data: {
             currency: RETREAT.currency,
-            unit_amount: RETREAT.depositCents,
-            product_data: {
-              name: `Deposit — ${productName}`,
-              description: `€500 deposit due today. Remaining ${formatEur(plan.remainingCents)} billed automatically over ${plan.monthlyCount} month${plan.monthlyCount === 1 ? "" : "s"}.`,
-            },
-          },
-        },
-        {
-          quantity: 1,
-          price_data: {
-            currency: RETREAT.currency,
             recurring: { interval: "month" },
             unit_amount: monthlyCents,
             product_data: {
@@ -146,16 +142,40 @@ export async function POST(request: Request) {
             },
           },
         },
+        {
+          quantity: 1,
+          price_data: {
+            currency: RETREAT.currency,
+            unit_amount: RETREAT.depositCents,
+            product_data: {
+              name: `Deposit — ${productName}`,
+              description: `€500 deposit due today. Remaining ${formatEur(plan.remainingCents)} billed automatically over ${plan.monthlyCount} month${plan.monthlyCount === 1 ? "" : "s"}.`,
+            },
+          },
+        },
       ],
     });
 
     return NextResponse.json({ url: session.url, mode: "stripe" });
   } catch (error) {
-    console.error("Stripe checkout failed", error);
+    const stripeMessage =
+      error instanceof Stripe.errors.StripeError ? error.message : String(error);
+    const stripeCode =
+      error instanceof Stripe.errors.StripeError ? error.code ?? error.type : undefined;
+    console.error("Stripe checkout failed", {
+      message: stripeMessage,
+      code: stripeCode,
+      paymentPlan: booking.paymentPlan,
+      packageSlug: pkg.slug,
+    });
+
+    // Surface Stripe's real reason outside production so it's diagnosable.
+    const exposeDetail = process.env.NODE_ENV !== "production" || process.env.DEBUG_STRIPE === "1";
     return NextResponse.json(
       {
-        error:
-          "Stripe could not start checkout. Check your keys, or try the mock flow by removing STRIPE_SECRET_KEY.",
+        error: exposeDetail
+          ? `Stripe could not start checkout: ${stripeMessage}`
+          : "Stripe could not start checkout. Please try again or message us on WhatsApp.",
       },
       { status: 502 },
     );
