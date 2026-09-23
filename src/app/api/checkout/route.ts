@@ -68,6 +68,9 @@ export async function POST(request: Request) {
     if (booking.paymentPlan === "full") {
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
+        // Card only. An explicit list disables Stripe's automatic payment methods,
+        // so Bancontact/Scalapay and the Link wallet are not offered.
+        payment_method_types: ["card"],
         customer_email: booking.email,
         phone_number_collection: { enabled: true },
         allow_promotion_codes: true,
@@ -111,6 +114,8 @@ export async function POST(request: Request) {
     // the earlier configuration fail.
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
+      // Card only (see full-payment session above).
+      payment_method_types: ["card"],
       customer_email: booking.email,
       phone_number_collection: { enabled: true },
       allow_promotion_codes: true,
