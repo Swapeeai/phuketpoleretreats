@@ -21,6 +21,23 @@ export async function POST(request: Request) {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
 
+    // Guarantee the installment subscription has a stop date. cancel_at cannot be
+    // set at Checkout Session creation (Stripe limitation), so we apply it here.
+    // Two independent triggers cover each other: checkout.session.completed AND
+    // customer.subscription.created. The update is idempotent — if cancel_at is
+    // already set we skip — so a subscription can never bill past its final month
+    // even if one event is missed, retried, or misrouted.
+    async function ensureCancelAt(subscriptionId: string, cancelAtUnix: number) {
+      if (!subscriptionId || !Number.isFinite(cancelAtUnix) || cancelAtUnix <= 0) return;
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      if (sub.cancel_at) {
+        console.info("[stripe] cancel_at already set", subscriptionId, sub.cancel_at);
+        return;
+      }
+      await stripe.subscriptions.update(subscriptionId, { cancel_at: cancelAtUnix });
+      console.info("[stripe] cancel_at applied", subscriptionId, cancelAtUnix);
+    }
+
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       const subscriptionId =
@@ -28,10 +45,15 @@ export async function POST(request: Request) {
           ? session.subscription
           : session.subscription?.id;
       const cancelAtUnix = Number(session.metadata?.cancelAtUnix);
-      if (subscriptionId && Number.isFinite(cancelAtUnix) && cancelAtUnix > 0) {
-        await stripe.subscriptions.update(subscriptionId, { cancel_at: cancelAtUnix });
+      if (subscriptionId) {
+        await ensureCancelAt(subscriptionId, cancelAtUnix);
       }
       console.info("[stripe] checkout.session.completed", session.id);
+    } else if (event.type === "customer.subscription.created") {
+      const sub = event.data.object as Stripe.Subscription;
+      const cancelAtUnix = Number(sub.metadata?.cancelAtUnix);
+      await ensureCancelAt(sub.id, cancelAtUnix);
+      console.info("[stripe] customer.subscription.created", sub.id);
     } else {
       console.info(`[stripe] ${event.type}`, event.id);
     }

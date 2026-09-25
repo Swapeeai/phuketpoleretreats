@@ -108,8 +108,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: plan.reason, field: "paymentPlan" }, { status: 400 });
     }
 
-    const monthlyCents = plan.charges.find((c) => c.label === "monthly")?.amountCents;
-    if (!monthlyCents) {
+    // Fixed monthly recurring amount (the floor). Any rounding remainder is
+    // charged once on the first invoice below, so the collected total equals the
+    // advertised price to the cent.
+    const monthlyBaseCents = plan.monthlyBaseCents;
+    if (!monthlyBaseCents || monthlyBaseCents <= 0) {
       return NextResponse.json({ error: "Could not build a monthly schedule." }, { status: 400 });
     }
 
@@ -120,6 +123,54 @@ export async function POST(request: Request) {
     // which Checkout charges on the subscription's initial invoice (today). Using a
     // trial_end avoids the "billing_cycle_anchor in the future" conflict that made
     // the earlier configuration fail.
+    //
+    // cancel_at is NOT settable on Checkout Session subscription_data (Stripe API
+    // limitation). It is applied post-completion by the webhook (belt) using the
+    // subscription_data.metadata.cancelAtUnix carried here (braces). See
+    // src/app/api/webhooks/stripe/route.ts, which handles both
+    // checkout.session.completed and customer.subscription.created.
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+      {
+        quantity: 1,
+        price_data: {
+          currency: RETREAT.currency,
+          recurring: { interval: "month" },
+          unit_amount: monthlyBaseCents,
+          product_data: {
+            name: `Monthly balance — ${productName}`,
+            description: `Automatic remaining balance until paid, ending by 28 November 2026.`,
+          },
+        },
+      },
+      {
+        quantity: 1,
+        price_data: {
+          currency: RETREAT.currency,
+          unit_amount: RETREAT.depositCents,
+          product_data: {
+            name: `Deposit — ${productName}`,
+            description: `€500 deposit due today. Remaining ${formatEur(plan.remainingCents)} billed automatically over ${plan.monthlyCount} month${plan.monthlyCount === 1 ? "" : "s"}.`,
+          },
+        },
+      },
+    ];
+
+    // One-time remainder so the total is exact (never over by a cent). Charged on
+    // the first invoice today alongside the deposit.
+    if (plan.firstInvoiceExtraCents > 0) {
+      lineItems.push({
+        quantity: 1,
+        price_data: {
+          currency: RETREAT.currency,
+          unit_amount: plan.firstInvoiceExtraCents,
+          product_data: {
+            name: `Balance adjustment — ${productName}`,
+            description: `One-time cent adjustment so the collected total matches the advertised price exactly.`,
+          },
+        },
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       // Card only (see full-payment session above).
@@ -144,31 +195,7 @@ export async function POST(request: Request) {
         },
         description: `${productName}. ${plan.summary}`,
       },
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: RETREAT.currency,
-            recurring: { interval: "month" },
-            unit_amount: monthlyCents,
-            product_data: {
-              name: `Monthly balance — ${productName}`,
-              description: `Automatic remaining balance until paid, ending by 28 November 2026.`,
-            },
-          },
-        },
-        {
-          quantity: 1,
-          price_data: {
-            currency: RETREAT.currency,
-            unit_amount: RETREAT.depositCents,
-            product_data: {
-              name: `Deposit — ${productName}`,
-              description: `€500 deposit due today. Remaining ${formatEur(plan.remainingCents)} billed automatically over ${plan.monthlyCount} month${plan.monthlyCount === 1 ? "" : "s"}.`,
-            },
-          },
-        },
-      ],
+      line_items: lineItems,
     });
 
     return NextResponse.json({ url: session.url, mode: "stripe" });

@@ -12,6 +12,14 @@ export type InstallmentPlan =
       depositCents: number;
       remainingCents: number;
       monthlyCount: number;
+      /** Fixed monthly recurring amount charged by Stripe every month (the floor). */
+      monthlyBaseCents: number;
+      /**
+       * Rounding remainder (remaining − monthlyBaseCents × count). Charged ONCE
+       * as a one-time line item on the first invoice so the collected total
+       * equals the advertised price exactly — never over by a cent.
+       */
+      firstInvoiceExtraCents: number;
       charges: InstallmentCharge[];
       firstMonthlyUnix: number;
       cancelAtUnix: number;
@@ -76,10 +84,13 @@ export function buildInstallmentPlan(
   }
 
   const monthlyCount = monthlyDates.length;
-  const monthlyCents = Math.ceil(remainingCents / monthlyCount);
-  const monthlyCharges: InstallmentCharge[] = monthlyDates.map((date) => ({
+  // Fixed recurring amount = floor; the leftover cents ride on the first invoice
+  // only, so deposit + remainder + base × count == total exactly (no overcharge).
+  const monthlyBaseCents = Math.floor(remainingCents / monthlyCount);
+  const firstInvoiceExtraCents = remainingCents - monthlyBaseCents * monthlyCount;
+  const monthlyCharges: InstallmentCharge[] = monthlyDates.map((date, index) => ({
     isoDate: toIso(date),
-    amountCents: monthlyCents,
+    amountCents: monthlyBaseCents + (index === 0 ? firstInvoiceExtraCents : 0),
     label: "monthly" as const,
   }));
 
@@ -103,6 +114,8 @@ export function buildInstallmentPlan(
     depositCents,
     remainingCents,
     monthlyCount,
+    monthlyBaseCents,
+    firstInvoiceExtraCents,
     charges,
     firstMonthlyUnix: Math.floor(monthlyDates[0].getTime() / 1000),
     cancelAtUnix: Math.floor(lastMonthly.getTime() / 1000) + 3 * 24 * 60 * 60,

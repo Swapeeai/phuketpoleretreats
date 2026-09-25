@@ -61,6 +61,9 @@ export function SiteFooter() {
           <Link className="hover:text-primary hover:underline" href="/cancellation">
             Cancellation policy
           </Link>
+          <Link className="hover:text-primary hover:underline" href="/terms">
+            Terms &amp; conditions
+          </Link>
         </div>
       </div>
       <p className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground">
