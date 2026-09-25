@@ -29,7 +29,15 @@ export async function POST(request: Request) {
     : "Workshops only";
   const productName = `${RETREAT.name} — ${pkg.title}${booking.occupancy ? ` (${occupancyLabel})` : ""}`;
   const origin = originFromRequest(request);
-  const successUrl = `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+  // Pass the booking back so the confirmation page can restate what was agreed
+  // (package, plan, total and the installment schedule) instead of a bare receipt.
+  const successParams = new URLSearchParams({
+    plan: booking.paymentPlan,
+    package: pkg.slug,
+    occupancy: booking.occupancy ?? "none",
+    total: String(variant.priceCents),
+  });
+  const successUrl = `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&${successParams.toString()}`;
   const cancelUrl = `${origin}/book/${pkg.slug}?checkout=cancelled`;
 
   const metadata = {

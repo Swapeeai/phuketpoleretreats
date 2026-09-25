@@ -39,7 +39,9 @@ export default async function SuccessPage({ searchParams }: Props) {
       <p className="mt-4 text-muted-foreground">
         {isMock
           ? "This was the demo checkout (no Stripe keys). In production, Stripe emails a receipt and we see the payment in the Stripe dashboard."
-          : "Stripe has taken today’s payment. You will also get a receipt from Stripe. We will follow up with rooming and level grouping."}
+          : query.plan === "installments"
+            ? "Stripe has taken your €500 deposit. The monthly payments below are charged automatically to the same card on the dates shown — you do not need to do anything, and Stripe emails a receipt each time. We will follow up with rooming and level grouping."
+            : "Stripe has taken today’s payment. You will also get a receipt from Stripe. We will follow up with rooming and level grouping."}
       </p>
       {pkg ? (
         <div className="mt-8 rounded-2xl border border-border bg-card p-6 text-sm">

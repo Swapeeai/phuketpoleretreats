@@ -47,17 +47,43 @@ export function BookingForm({ pkg, cancelled }: Props) {
     [totalCents],
   );
 
+  /** Move focus to the first field the dancer still needs to fill in. */
+  function focusField(field: string) {
+    const container = document.querySelector<HTMLElement>(`[data-field="${field}"]`);
+    const target =
+      document.getElementById(field) ??
+      container?.querySelector<HTMLElement>('input, button, [role="radio"], [tabindex]') ??
+      container;
+    target?.focus();
+    target?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
   async function submitBooking() {
     setError(null);
     setFieldError(null);
 
+    const missing: { field: string; message: string }[] = [];
     if (pkg.includesHotel && !occupancy) {
-      setFieldError("occupancy");
-      setError("Choose Shared or Solo occupancy.");
-      return;
+      missing.push({ field: "occupancy", message: "Choose Shared or Solo occupancy." });
     }
-    if (!fullName.trim() || !email.trim() || !phone.trim() || !level || !acceptPolicy) {
-      setError("Fill in name, email, phone, level, and accept the cancellation policy.");
+    if (!fullName.trim()) missing.push({ field: "fullName", message: "Enter the dancer’s full name." });
+    if (!email.trim()) missing.push({ field: "email", message: "Enter your email address." });
+    if (!phone.trim()) missing.push({ field: "phone", message: "Enter a phone or WhatsApp number." });
+    if (!level) {
+      missing.push({ field: "level", message: "Choose your training level so we can place you in a group." });
+    }
+    if (!acceptPolicy) {
+      missing.push({
+        field: "acceptPolicy",
+        message: "Please confirm you have read the cancellation policy. Bookings are non-refundable.",
+      });
+    }
+
+    const first = missing[0];
+    if (first) {
+      setFieldError(first.field);
+      setError(first.message);
+      focusField(first.field);
       return;
     }
 
@@ -111,7 +137,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
       ) : null}
 
       {pkg.includesHotel ? (
-        <fieldset className="space-y-3">
+        <fieldset className="space-y-3" data-field="occupancy">
           <legend className="text-sm font-medium">Occupancy</legend>
           <RadioGroup
             value={occupancy}
@@ -252,13 +278,33 @@ export function BookingForm({ pkg, cancelled }: Props) {
                 <span className="font-medium">{formatEur(charge.amountCents)}</span>
               </li>
             ))}
+            {totalCents ? (
+              <li className="flex justify-between gap-4 border-t border-border pt-2 font-medium">
+                <span>Total you will pay</span>
+                <span>{formatEur(totalCents)}</span>
+              </li>
+            ) : null}
           </ol>
         ) : null}
-        <p className="text-xs leading-relaxed text-[#3e3e3e]">
-          DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before
-          the start of the retreat. Last monthly payment is on or before{" "}
-          {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
-        </p>
+        {paymentPlan === "installments" && installment?.available ? (
+          <p className="text-xs leading-relaxed text-[#3e3e3e]">
+            The €500 deposit is charged today. Each monthly payment above is then charged{" "}
+            <strong className="font-medium">automatically to the same card</strong> on the date
+            shown — you do not need to do anything, and Stripe emails you a receipt for every
+            payment. That is {installment.monthlyCount} monthly payment
+            {installment.monthlyCount === 1 ? "" : "s"} of{" "}
+            {formatEur(installment.charges[1].amountCents)}, finishing on{" "}
+            {formatShortDate(installment.charges[installment.charges.length - 1].isoDate)} — on or
+            before {formatShortDate(RETREAT.balanceDeadlineIso)}, 60 days before the retreat. All
+            payments, including the deposit, are non-refundable.
+          </p>
+        ) : (
+          <p className="text-xs leading-relaxed text-[#3e3e3e]">
+            DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before
+            the start of the retreat. Last monthly payment is on or before{" "}
+            {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
+          </p>
+        )}
       </fieldset>
       )}
 
@@ -313,7 +359,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
         </div>
       </div>
 
-      <fieldset className="space-y-3">
+      <fieldset className="space-y-3" data-field="level">
         <legend className="text-sm font-medium">Training level</legend>
         <RadioGroup
           value={level}
@@ -351,12 +397,13 @@ export function BookingForm({ pkg, cancelled }: Props) {
         />
       </div>
 
-      <label className="flex items-start gap-3 text-sm">
+      <label className="flex items-start gap-3 text-sm" data-field="acceptPolicy">
         <Checkbox
           checked={acceptPolicy}
           onCheckedChange={(value) => setAcceptPolicy(Boolean(value))}
           className="mt-0.5"
-          aria-label="Accept cancellation policy"
+          aria-label="I have read the cancellation policy. Bookings are non-refundable."
+          aria-invalid={fieldError === "acceptPolicy"}
         />
         <span>
           I have read the{" "}
@@ -380,6 +427,20 @@ export function BookingForm({ pkg, cancelled }: Props) {
             ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} today`
             : "Pay €500 deposit today"}
       </button>
+
+      <p className="text-xs leading-relaxed text-[#3e3e3e]">
+        Card payments are handled by Stripe — we never see or store your card number. We use the
+        details above to manage your booking, place you in a level group and arrange rooming. See
+        our{" "}
+        <Link href="/privacy" className="underline underline-offset-2">
+          privacy policy
+        </Link>{" "}
+        and{" "}
+        <Link href="/cancellation" className="underline underline-offset-2">
+          cancellation policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }

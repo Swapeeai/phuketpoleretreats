@@ -1,9 +1,14 @@
 import { WHATSAPP_DISPLAY, WHATSAPP_ME } from "@/lib/whatsapp";
 
 export const SITE_NAME = "Phuket Pole Retreats";
+/**
+ * Canonical/sitemap host. Defaults to the production domain so a missing
+ * NEXT_PUBLIC_SITE_URL never publishes localhost canonicals; Stripe redirects
+ * use the request host instead (see originFromRequest).
+ */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "http://127.0.0.1:43211";
+  "https://www.phuketpoleretreats.com";
 export const WHATSAPP_E164 = "+66928320802";
 export { WHATSAPP_DISPLAY };
 export const WHATSAPP_URL = WHATSAPP_ME;

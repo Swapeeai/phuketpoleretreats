@@ -46,6 +46,13 @@ export function validateBooking(input: Partial<BookingPayload>): BookingValidati
   if (!input.level) {
     return { ok: false, error: "Choose your training level so we can place you in a group.", field: "level" };
   }
+  if (!(RETREAT.levels as readonly string[]).includes(input.level)) {
+    return {
+      ok: false,
+      error: "Choose a valid training level: Intermediate, Advanced, or Pro.",
+      field: "level",
+    };
+  }
   if (input.paymentPlan !== "full" && input.paymentPlan !== "installments") {
     return { ok: false, error: "Choose pay in full or installments.", field: "paymentPlan" };
   }
