@@ -49,6 +49,9 @@ export function validateBooking(input: Partial<BookingPayload>): BookingValidati
   if (input.paymentPlan !== "full" && input.paymentPlan !== "installments") {
     return { ok: false, error: "Choose pay in full or installments.", field: "paymentPlan" };
   }
+  if (pkg.fullPaymentOnly && input.paymentPlan !== "full") {
+    return { ok: false, error: "This package is pay in full only.", field: "paymentPlan" };
+  }
   if (!input.acceptPolicy) {
     return {
       ok: false,

@@ -25,7 +25,9 @@ export function BookingForm({ pkg, cancelled }: Props) {
   const [occupancy, setOccupancy] = useState<Occupancy | "">(
     pkg.includesHotel ? "" : "",
   );
-  const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("installments");
+  const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>(
+    pkg.fullPaymentOnly ? "full" : "installments",
+  );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -165,6 +167,18 @@ export function BookingForm({ pkg, cancelled }: Props) {
         </p>
       )}
 
+      {pkg.fullPaymentOnly ? (
+        <div className="space-y-2">
+          <p className="font-heading text-xl">Payment</p>
+          <div className="border border-primary bg-card p-5">
+            <p className="text-sm font-medium uppercase tracking-[0.12em] text-primary">Pay in full</p>
+            <p className="mt-2 font-heading text-3xl">
+              {totalCents ? formatEur(totalCents) : "Package total"}
+            </p>
+            <p className="mt-1 text-sm text-[#3e3e3e]">Pay the full amount today by card.</p>
+          </div>
+        </div>
+      ) : (
       <fieldset className="space-y-3">
         <legend className="font-heading text-xl">How would you like to pay?</legend>
         <p className="text-sm leading-relaxed text-[#272727]">
@@ -246,6 +260,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
           {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
         </p>
       </fieldset>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">

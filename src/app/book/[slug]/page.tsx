@@ -7,7 +7,7 @@ import { JsonLd } from "@/components/json-ld";
 import { PackageGallery } from "@/components/package-gallery";
 import { Badge } from "@/components/ui/badge";
 import { formatEur } from "@/lib/format";
-import { getPackage, PACKAGES } from "@/lib/retreat";
+import { ALL_PACKAGES, getPackage } from "@/lib/retreat";
 import { offerJsonLd, pageMetadata } from "@/lib/seo";
 
 type Props = {
@@ -16,13 +16,21 @@ type Props = {
 };
 
 export function generateStaticParams() {
-  return PACKAGES.map((pkg) => ({ slug: pkg.slug }));
+  return ALL_PACKAGES.map((pkg) => ({ slug: pkg.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const pkg = getPackage(slug);
   if (!pkg) return { title: "Package not found" };
+  if (pkg.hidden) {
+    return {
+      title: `${pkg.title} | Phuket Pole Retreats`,
+      description: pkg.description,
+      robots: { index: false, follow: false },
+      alternates: { canonical: `/book/${pkg.slug}` },
+    };
+  }
   return pageMetadata({
     title: `Book ${pkg.title} — Phuket pole training week`,
     description: `${pkg.description} From ${formatEur(pkg.fromCents)}. Pole Art Retreat at Ayara Kamala, 28 January–1 February 2027. Pay in full, or €500 deposit today and monthly payments after.`,
@@ -40,7 +48,7 @@ export default async function PackagePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
-      <JsonLd data={offerJsonLd(pkg)} />
+      {pkg.hidden ? null : <JsonLd data={offerJsonLd(pkg)} />}
       <div>
         <Breadcrumbs
           items={[
@@ -79,7 +87,9 @@ export default async function PackagePage({ params, searchParams }: Props) {
       <div className="border border-border bg-card p-5 sm:p-6">
         <h2 className="text-2xl">Reserve your spot</h2>
         <p className="mt-2 text-sm leading-relaxed text-[#272727]">
-          Pay in full, or €500 deposit today and monthly payments after.
+          {pkg.fullPaymentOnly
+            ? "Pay in full today."
+            : "Pay in full, or €500 deposit today and monthly payments after."}
         </p>
         <div className="mt-6">
           <BookingForm pkg={pkg} cancelled={checkout === "cancelled"} />

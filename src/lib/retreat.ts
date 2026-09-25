@@ -64,6 +64,10 @@ export type RetreatPackage = {
   images: string[];
   variants: PackageVariant[];
   notes?: string[];
+  /** Hidden from all public listings/sitemap/JSON-LD; reachable only by direct URL. */
+  hidden?: boolean;
+  /** Only pay-in-full is offered (no €500 deposit / installments). */
+  fullPaymentOnly?: boolean;
 };
 
 export const PACKAGES: RetreatPackage[] = [
@@ -311,8 +315,33 @@ export const FAQS: FaqItem[] = [
   },
 ];
 
+/**
+ * Hidden packages are NOT in PACKAGES, so they never appear on /book, the
+ * homepage, the nav, the sitemap, or any Offer JSON-LD. They are reachable only
+ * by their direct /book/<slug> URL. Used for owner end-to-end payment tests.
+ */
+export const HIDDEN_PACKAGES: RetreatPackage[] = [
+  {
+    slug: "test-booking",
+    title: "Test booking (€1)",
+    fromCents: 100,
+    includesHotel: false,
+    hidden: true,
+    fullPaymentOnly: true,
+    description:
+      "Internal €1 test booking so the team can run a real end-to-end card payment through live Stripe. Not a real retreat package.",
+    highlights: ["€1 live Stripe card payment", "Pay in full only", "Internal test — not a retreat booking"],
+    images: [IMG.aerialHotel],
+    variants: [{ occupancy: null, priceCents: 100, sku: "TEST-BOOKING-1EUR" }],
+    notes: ["This is a hidden test package. It is not listed anywhere and is for the owners only."],
+  },
+];
+
+/** Public packages plus hidden ones — for direct-URL routing only. */
+export const ALL_PACKAGES: RetreatPackage[] = [...PACKAGES, ...HIDDEN_PACKAGES];
+
 export function getPackage(slug: string) {
-  return PACKAGES.find((item) => item.slug === slug);
+  return ALL_PACKAGES.find((item) => item.slug === slug);
 }
 
 export function getVariant(pkg: RetreatPackage, occupancy: Occupancy | null) {
