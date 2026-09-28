@@ -52,10 +52,11 @@ export async function POST(request: Request) {
       console.info("[stripe] checkout.session.completed", session.id);
       // Mail runs only after cancel_at. A Resend failure must not 500 the
       // webhook once the Stripe update has succeeded. Unpaid sessions are
-      // ignored inside sendBookingConfirmations. subscription.created does
-      // not send mail, so a paid checkout produces one pair of emails.
+      // ignored inside sendBookingConfirmations. The success page sends with
+      // the same Checkout Session idempotency key, so the pair is not doubled.
+      // subscription.created does not send mail.
       try {
-        await sendBookingConfirmations(event.id, session);
+        await sendBookingConfirmations(session);
       } catch (emailError) {
         console.error("[booking-email] failed after Stripe update", session.id, emailError);
       }

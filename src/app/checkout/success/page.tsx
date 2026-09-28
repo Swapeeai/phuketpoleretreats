@@ -3,8 +3,10 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { formatEur, formatShortDate } from "@/lib/format";
 import { buildInstallmentPlan } from "@/lib/installments";
+import { sendBookingConfirmations } from "@/lib/booking-email";
 import { getPackage } from "@/lib/retreat";
 import { canonicalUrl } from "@/lib/seo";
+import { getStripe } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,6 +14,23 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   alternates: { canonical: canonicalUrl("/checkout/success") },
 };
+
+export const dynamic = "force-dynamic";
+
+async function sendSuccessBookingEmail(sessionId: string) {
+  const stripe = getStripe();
+  if (!stripe) {
+    console.error("[booking-email] success page skipped, Stripe not configured", sessionId);
+    return;
+  }
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    await sendBookingConfirmations(session);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown";
+    console.error(`[booking-email] success page failed session=${sessionId} message=${message}`);
+  }
+}
 
 type Props = {
   searchParams: Promise<{
@@ -27,6 +46,10 @@ type Props = {
 export default async function SuccessPage({ searchParams }: Props) {
   const query = await searchParams;
   const isMock = query.mock === "1";
+  const sessionId = query.session_id?.trim();
+  if (!isMock && sessionId) {
+    await sendSuccessBookingEmail(sessionId);
+  }
   const pkg = query.package ? getPackage(query.package) : undefined;
   const totalCents = query.total ? Number(query.total) : pkg?.fromCents;
   const installment =

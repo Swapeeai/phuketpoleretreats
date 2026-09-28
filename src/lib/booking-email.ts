@@ -140,10 +140,12 @@ export function buildBookingEmails(session: BookingSession): BookingEmails {
   };
 }
 
-export async function sendBookingConfirmations(eventId: string, session: Stripe.Checkout.Session) {
-  if (session.payment_status !== "paid") {
+export async function sendBookingConfirmations(session: Stripe.Checkout.Session) {
+  // "unpaid" is a Checkout Session that has not collected money yet.
+  // "no_payment_required" is still a completed booking (for example a zero total).
+  if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") {
     console.info(
-      "[booking-email] skipped, payment not paid",
+      "[booking-email] skipped, payment not complete",
       session.id,
       session.payment_status,
     );
@@ -172,7 +174,7 @@ export async function sendBookingConfirmations(eventId: string, session: Stripe.
       subject: emails.guest.subject,
       html: emails.guest.html,
       text: emails.guest.text,
-      idempotencyKey: idempotencyKey(eventId, "guest"),
+      idempotencyKey: idempotencyKey(session.id, "guest"),
       logLabel: "guest",
       sessionId: session.id,
     });
@@ -196,7 +198,7 @@ export async function sendBookingConfirmations(eventId: string, session: Stripe.
     subject: emails.organizer.subject,
     html: emails.organizer.html,
     text: emails.organizer.text,
-    idempotencyKey: idempotencyKey(eventId, "organizer"),
+    idempotencyKey: idempotencyKey(session.id, "organizer"),
     logLabel: "organizer",
     sessionId: session.id,
   });
@@ -208,11 +210,65 @@ function bookingReplyTo() {
   return DEFAULT_REPLY_TO;
 }
 
-function idempotencyKey(eventId: string, role: "guest" | "organizer") {
-  // Resend stores one payload per key. The event id is the stable Stripe retry
-  // token; the role suffix keeps the guest letter and the organizer alert distinct.
-  const safe = eventId.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 220);
-  return `${safe || "stripe-event"}/${role}`;
+function idempotencyKey(sessionId: string, role: "guest" | "organizer") {
+  // Resend stores one payload per key. The Checkout Session id is shared by the
+  // webhook and the success page, so both paths send one guest letter and one
+  // organizer alert instead of a second copy. The role suffix keeps them distinct.
+  const safe = sessionId.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 220);
+  return `${safe || "stripe-session"}/${role}`;
+}
+
+const TEST_NOTIFY_FALLBACK = ["info@ibizapoleretreats.com", "jennyliebert@yahoo.com"];
+
+export type BookingEmailTestResult = {
+  ok: boolean;
+  missingKey: boolean;
+  status: number | null;
+  name: string | null;
+  message: string | null;
+  id: string | null;
+};
+
+/** Temporary diagnostic send. Same client and From as booking mail. No API key in the result. */
+export async function sendBookingNotifyTest(): Promise<BookingEmailTestResult> {
+  const empty: BookingEmailTestResult = {
+    ok: false,
+    missingKey: false,
+    status: null,
+    name: null,
+    message: null,
+    id: null,
+  };
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    console.error("[booking-email] test skipped, RESEND_API_KEY missing");
+    return { ...empty, missingKey: true, message: "RESEND_API_KEY missing" };
+  }
+
+  const configured = parseNotifyEmails(process.env.BOOKING_NOTIFY_EMAILS);
+  const to = configured.length > 0 ? configured : TEST_NOTIFY_FALLBACK;
+  const resend = new Resend(apiKey);
+  try {
+    const { data, error } = await resend.emails.send({
+      from: process.env.BOOKING_FROM?.trim() || DEFAULT_FROM,
+      to,
+      replyTo: bookingReplyTo(),
+      subject: "Phuket Pole Retreats mail test",
+      text: "Plain booking-mail test from the production server.",
+      html: "<p>Plain booking-mail test from the production server.</p>",
+    });
+    if (error) {
+      const info = resendFailure(error);
+      console.error(`[booking-email] test failed ${describeResendError(error)}`);
+      return { ...empty, ...info };
+    }
+    console.info("[booking-email] test sent", data?.id ?? "no-id");
+    return { ...empty, ok: true, id: data?.id ?? null };
+  } catch (error) {
+    const info = resendFailure(error);
+    console.error(`[booking-email] test failed ${describeResendError(error)}`);
+    return { ...empty, ...info };
+  }
 }
 
 async function deliver(
@@ -255,26 +311,45 @@ async function deliver(
   }
 }
 
-/** One line Vercel can search. Resend returns { message, name, statusCode } and does not create an email. */
-function describeResendError(error: unknown) {
+type ResendFailure = {
+  status: number | null;
+  name: string | null;
+  message: string | null;
+};
+
+/** Resend returns { message, name, statusCode } and does not create an email. */
+function resendFailure(error: unknown): ResendFailure {
   if (!error || typeof error !== "object") {
-    return error instanceof Error ? `message=${error.message}` : "message=unknown";
+    return {
+      status: null,
+      name: error instanceof Error ? error.name : null,
+      message: error instanceof Error ? error.message : "unknown",
+    };
   }
   const record = error as { message?: unknown; name?: unknown; statusCode?: unknown };
-  const message = typeof record.message === "string" ? record.message : "";
-  const name = typeof record.name === "string" ? record.name : "";
+  const message = typeof record.message === "string" && record.message ? record.message : null;
+  const name = typeof record.name === "string" && record.name ? record.name : null;
   const status =
-    typeof record.statusCode === "number" || typeof record.statusCode === "string"
-      ? String(record.statusCode)
-      : "";
+    typeof record.statusCode === "number"
+      ? record.statusCode
+      : typeof record.statusCode === "string" && Number.isFinite(Number(record.statusCode))
+        ? Number(record.statusCode)
+        : null;
+  if (message || name || status != null) return { status, name, message };
+  if (error instanceof Error) {
+    return { status: null, name: error.name || null, message: error.message || "unknown" };
+  }
+  return { status: null, name: null, message: "unknown" };
+}
+
+function describeResendError(error: unknown) {
+  const info = resendFailure(error);
   const parts = [
-    status ? `status=${status}` : "",
-    name ? `name=${name}` : "",
-    message ? `message=${message}` : "",
+    info.status != null ? `status=${info.status}` : "",
+    info.name ? `name=${info.name}` : "",
+    info.message ? `message=${info.message}` : "",
   ].filter(Boolean);
-  if (parts.length > 0) return parts.join(" ");
-  if (error instanceof Error && error.message) return `message=${error.message}`;
-  return "message=unknown";
+  return parts.join(" ") || "message=unknown";
 }
 
 type Schedule = {
