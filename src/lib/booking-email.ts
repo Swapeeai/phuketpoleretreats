@@ -13,6 +13,8 @@ import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
  */
 
 const DEFAULT_FROM = "Phuket Pole Retreats <bookings@phuketpoleretreats.com>";
+/** Server-only. Not rendered on the site. Override with BOOKING_REPLY_TO. */
+const DEFAULT_REPLY_TO = "info@ibizapoleretreats.com";
 const GUEST_SUBJECT = "Your Phuket Pole Retreat booking";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -160,11 +162,13 @@ export async function sendBookingConfirmations(eventId: string, session: Stripe.
   const emails = buildBookingEmails(session);
   const resend = new Resend(apiKey);
   const from = process.env.BOOKING_FROM?.trim() || DEFAULT_FROM;
+  const replyTo = bookingReplyTo();
 
   if (emails.guestTo) {
     await deliver(resend, {
       from,
       to: [emails.guestTo],
+      replyTo,
       subject: emails.guest.subject,
       html: emails.guest.html,
       text: emails.guest.text,
@@ -188,7 +192,7 @@ export async function sendBookingConfirmations(eventId: string, session: Stripe.
   await deliver(resend, {
     from,
     to: organizers,
-    replyTo: emails.guestTo ?? undefined,
+    replyTo,
     subject: emails.organizer.subject,
     html: emails.organizer.html,
     text: emails.organizer.text,
@@ -196,6 +200,12 @@ export async function sendBookingConfirmations(eventId: string, session: Stripe.
     logLabel: "organizer",
     sessionId: session.id,
   });
+}
+
+function bookingReplyTo() {
+  const configured = process.env.BOOKING_REPLY_TO?.trim();
+  if (configured && EMAIL_RE.test(configured)) return configured;
+  return DEFAULT_REPLY_TO;
 }
 
 function idempotencyKey(eventId: string, role: "guest" | "organizer") {

@@ -54,6 +54,7 @@ Paste these into `.env.local` from the Stripe Dashboard (test mode first):
 | `NEXT_PUBLIC_SITE_URL` | Public origin, e.g. `https://www.phuketpoleretreats.com` |
 | `RESEND_API_KEY` | Resend API key. Server only. Confirmation mail after a paid checkout. |
 | `BOOKING_FROM` | Optional From header. Defaults to `Phuket Pole Retreats <bookings@phuketpoleretreats.com>`. |
+| `BOOKING_REPLY_TO` | Optional Reply-To on both booking emails. Server only. If unset, the server uses its built-in reply-to. Not rendered on the site. |
 | `BOOKING_NOTIFY_EMAILS` | Comma-separated organizer inboxes. Server only. Not rendered on the site. |
 
 A paid `checkout.session.completed` emails the guest and, when `BOOKING_NOTIFY_EMAILS` is set, the organizers. Unpaid sessions and the checkout-creation request do not send mail. No WhatsApp message is sent.
