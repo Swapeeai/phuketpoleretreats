@@ -66,7 +66,24 @@ Packages, prices, instructors, dates, and policies match the live site (EUR).
 
 ## SEO
 
-Unique titles and meta descriptions for 2027, one H1 per page, semantic headings, Open Graph + Twitter cards, canonical URLs, JSON-LD (Organization, WebSite, Event/Offer, BreadcrumbList, FAQPage), `sitemap.xml`, `robots.txt`, and descriptive image alts. Keywords (pole retreat, pole camp, pole training week, intermediate / advanced / pro) sit in titles, descriptions, and alts — visible body copy stays Tara’s.
+Unique titles and meta descriptions for the Phuket pole retreat, Ayara Kamala pole camp, and the 2027 intermediate / advanced / pro training week. One H1 per page. Canonical and `og:url` use `https://www.phuketpoleretreats.com` (a `vercel.app` host is never used, and non-www / preview hosts stay `noindex` via middleware). Open Graph image is the self-hosted 1200×630 file at `/images/og/phuket-pole-retreat.jpg`. JSON-LD covers Organization, WebSite, Event, Offer, FAQPage, and BreadcrumbList. `sitemap.xml` and `robots.txt` list the public pages. Visible retreat copy stays Tara’s.
+
+`NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` adds the Search Console meta tag only when it is set.
+
+## Cookies, Meta, and Google ads
+
+A cookie banner (Accept / Reject) stores the choice in `localStorage` under `ppr-cookie-consent`. Reject loads no marketing scripts. The Meta Pixel is not in the initial HTML and `fbevents.js` loads only after Accept. Google tags load after Accept only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` and/or `NEXT_PUBLIC_GOOGLE_ADS_ID` is set — a missing Google ID does not emit an empty script tag. No Google Ads ID is configured (the old account is closed).
+
+| Variable | Where the owner copies it |
+| --- | --- |
+| `NEXT_PUBLIC_META_PIXEL_ID` | Optional override. Default is the public Pixel `1078532138132230` (Events Manager → Data sources → pixel → Settings → Pixel ID). Still loads only after Accept. |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Google Analytics → Admin → Data streams → web stream → Measurement ID (`G-…`) |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID` | Google Ads → Goals → Conversions → Google tag, or Tools → Data manager → Google tag → Tag ID (`AW-…`) |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console → Settings → Ownership verification → HTML tag → `content` value only |
+
+Set them in Vercel → Project → Settings → Environment Variables and redeploy. They are inlined at build time. Do not commit real IDs.
+
+After Accept, the Meta Pixel sends PageView on each navigation, ViewContent on `/book` and package pages, InitiateCheckout when a valid booking is submitted, and Purchase on `/checkout/success` when `session_id` is present (EUR when `total` is present). Google Consent Mode v2 defaults `ad_storage`, `analytics_storage`, `ad_user_data`, and `ad_personalization` to denied until Accept, then gtag sends `page_view`, `view_item` on a package, `begin_checkout`, and `purchase`. The `AW-` tag is what builds Google Ads remarketing audiences. To count purchases as Ads conversions, import the GA4 `purchase` event into Google Ads (there is no separate conversion-label variable).
 
 ## Contact & chat
 

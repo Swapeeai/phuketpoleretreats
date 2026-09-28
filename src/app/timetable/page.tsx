@@ -6,9 +6,9 @@ import { SCENERY } from "@/lib/images";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Workshop timetable for the Phuket pole camp",
+  title: "Pole Camp Timetable, Phuket 2027",
   description:
-    "Official colourful workshop timetable for the Phuket Pole Art Retreat — 12 hours of pole with Karem Gutierrez, Adam Lin, Yvonne Smink and Jenny Liebert, 28 January to 1 February 2027 at Ayara Kamala.",
+    "Workshop timetable for the pole camp in Phuket — intermediate, advanced and pro classes, 28 January–1 February 2027 at the Ayara Kamala pole retreat.",
   path: "/timetable",
 });
 

@@ -10,9 +10,9 @@ import { pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata({
-  title: "FAQs for the Phuket pole camp",
+  title: "Pole Retreat Phuket FAQs",
   description:
-    "Questions about the Phuket Pole Art Retreat: intermediate, advanced and pro groups, 12 hours of workshops, hotel packages at Ayara Kamala, and paying in full or with a €500 deposit.",
+    "FAQs for the Ayara Kamala pole retreat: intermediate, advanced and pro groups, rooms, meals, and booking the 2027 pole training week in Phuket.",
   path: "/faqs",
 });
 

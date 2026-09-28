@@ -190,5 +190,10 @@
 #timetable,
 #boat-trip,
 #instructors {
-  scroll-margin-top: 11rem;
+  scroll-margin-top: 16rem;
+}
+
+/* Banner stays in the HTML. Hide it once a choice is stored, until Cookie choices reopens it. */
+html[data-cookie-consent]:not([data-cookie-banner="open"]) #cookie-banner {
+  display: none;
 }

@@ -13,9 +13,9 @@ import { eventJsonLd, pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Book the Phuket pole retreat 2027",
+  title: "Book the Ayara Kamala Pole Retreat",
   description:
-    "Book the Pole Art Retreat at Ayara Kamala — a pole camp and training week in Phuket, 28th January - 1st February 2027. Workshops only or hotel packages. Pay in full, or €500 deposit today and monthly payments after.",
+    "Book a pole retreat in Phuket: workshops only or a room at Ayara Kamala, 28 January–1 February 2027. An intermediate, advanced and pro pole training week.",
   path: "/book",
 });
 

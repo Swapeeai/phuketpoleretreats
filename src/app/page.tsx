@@ -45,6 +45,7 @@ export default function HomePage() {
           <p className="hero-copy mt-3 max-w-2xl text-sm text-white/90 sm:text-base">{LIVE.heroInstructors}</p>
           <Link
             href="/book"
+            data-book-cta
             className={cn(
               buttonVariants({ size: "lg" }),
               "hero-copy mt-10 h-12 rounded-full px-8 text-sm uppercase tracking-[0.18em]",
@@ -54,6 +55,36 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      <nav aria-label="Explore the retreat" className="border-b border-border bg-sand">
+        <ul className="mx-auto flex max-w-6xl flex-wrap gap-x-5 gap-y-2 px-4 py-3 text-sm sm:px-6">
+          <li>
+            <Link href="/book" className="text-primary underline-offset-4 hover:underline">
+              Book
+            </Link>
+          </li>
+          <li>
+            <Link href="/timetable" className="text-primary underline-offset-4 hover:underline">
+              Timetable
+            </Link>
+          </li>
+          <li>
+            <Link href="/faqs" className="text-primary underline-offset-4 hover:underline">
+              FAQs
+            </Link>
+          </li>
+          <li>
+            <Link href="/#instructors" className="text-primary underline-offset-4 hover:underline">
+              Instructors
+            </Link>
+          </li>
+          <li>
+            <Link href="/contact" className="text-primary underline-offset-4 hover:underline">
+              Contact
+            </Link>
+          </li>
+        </ul>
+      </nav>
 
       <ScenicBand src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt} />
 
@@ -67,7 +98,7 @@ export default function HomePage() {
                 <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                   <Image
                     src={instructor.image}
-                    alt={`${instructor.name}, instructor at the Phuket Pole Art Retreat`}
+                    alt={`${instructor.name}, pole instructor at the Ayara Kamala pole retreat in Phuket`}
                     fill
                     sizes="(max-width: 640px) 100vw, 176px"
                     className="object-cover"
@@ -134,7 +165,11 @@ export default function HomePage() {
               <div className="relative h-56">
                 <Image
                   src={pkg.images[0]}
-                  alt={`${pkg.title} at Ayara Kamala — Phuket pole retreat accommodation`}
+                  alt={
+                    pkg.includesHotel
+                      ? `${pkg.title} room at the Ayara Kamala pole retreat in Phuket`
+                      : "Aerial of Ayara Kamala Resort & Spa, where the Phuket pole camp workshops are held"
+                  }
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"

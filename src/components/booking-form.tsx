@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { buildInstallmentPlan } from "@/lib/installments";
+import { trackBeginCheckout } from "@/lib/marketing";
 import { formatEur, formatShortDate } from "@/lib/format";
 import { RETREAT, type Level, type Occupancy, type PaymentPlan, type RetreatPackage } from "@/lib/retreat";
 import { getVariant } from "@/lib/retreat";
@@ -88,6 +89,11 @@ export function BookingForm({ pkg, cancelled }: Props) {
     }
 
     setSubmitting(true);
+    trackBeginCheckout({
+      slug: pkg.slug,
+      name: pkg.title,
+      value: totalCents != null ? totalCents / 100 : undefined,
+    });
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",

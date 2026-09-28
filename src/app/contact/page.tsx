@@ -8,9 +8,9 @@ import { pageMetadata } from "@/lib/seo";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Contact us about the Phuket pole retreat",
+  title: "Contact the Phuket Pole Retreat",
   description:
-    "Message us on WhatsApp about the Phuket Pole Art Retreat — a pole camp and training week at Ayara Kamala, 28th January - 1st of February 2027. Ask about packages, levels, or booking.",
+    "Questions about the pole camp in Phuket or the Ayara Kamala pole retreat? Message us on WhatsApp about packages and your pole training week group.",
   path: "/contact",
 });
 

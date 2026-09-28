@@ -5,9 +5,9 @@ import { pageMetadata } from "@/lib/seo";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Terms & conditions",
+  title: "Terms for the Ayara Kamala Pole Retreat",
   description:
-    "Terms and conditions for booking the Phuket Pole Art Retreat at Ayara Kamala: what is sold, EUR prices, pay in full or €500 deposit with automatic monthly payments, non-refundable bookings, Stripe as payment processor, and contact by WhatsApp.",
+    "Terms for booking the pole retreat in Phuket: EUR prices, pay in full or a €500 deposit, non-refundable places, and the 2027 pole training week at Ayara Kamala.",
   path: "/terms",
 });
 

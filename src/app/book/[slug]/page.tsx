@@ -8,7 +8,7 @@ import { PackageGallery } from "@/components/package-gallery";
 import { Badge } from "@/components/ui/badge";
 import { formatEur } from "@/lib/format";
 import { ALL_PACKAGES, getPackage } from "@/lib/retreat";
-import { offerJsonLd, pageMetadata } from "@/lib/seo";
+import { canonicalUrl, offerJsonLd, pageMetadata } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -25,20 +25,49 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!pkg) return { title: "Package not found" };
   if (pkg.hidden) {
     return {
-      title: `${pkg.title} | Phuket Pole Retreats`,
+      title: pkg.title,
       description: pkg.description,
       robots: { index: false, follow: false },
-      alternates: { canonical: `/book/${pkg.slug}` },
+      alternates: { canonical: canonicalUrl(`/book/${pkg.slug}`) },
     };
   }
+  const seo = PACKAGE_SEO[pkg.slug];
   return pageMetadata({
-    title: `Book ${pkg.title} — Phuket pole training week`,
-    description: `${pkg.description} From ${formatEur(pkg.fromCents)}. Pole Art Retreat at Ayara Kamala, 28 January–1 February 2027. Pay in full, or €500 deposit today and monthly payments after.`,
+    title: seo?.title ?? `${pkg.title} Pole Retreat`,
+    description:
+      seo?.description ??
+      `${pkg.description} Pole training week at Ayara Kamala, Phuket, 28 January–1 February 2027. From ${formatEur(pkg.fromCents)}.`,
     path: `/book/${pkg.slug}`,
-    image: pkg.images[0],
-    imageAlt: `${pkg.title} at Ayara Kamala Resort & Spa for the Phuket pole retreat`,
   });
 }
+
+const PACKAGE_SEO: Record<string, { title: string; description: string }> = {
+  "workshops-only": {
+    title: "Workshops Only Pole Camp in Phuket",
+    description:
+      "Workshops-only place on the pole retreat in Phuket. 12 hours at Ayara Kamala, 28 January–1 February 2027, from €850. You arrange your own stay.",
+  },
+  "deluxe-ocean-view": {
+    title: "Deluxe Ocean View Pole Retreat",
+    description:
+      "Deluxe Ocean View at the Ayara Kamala pole retreat — six nights and the Phuket pole training week, 28 January–1 February 2027, from €1,400.",
+  },
+  "grand-thai-natural": {
+    title: "Grand Thai Natural Ocean View Stay",
+    description:
+      "Grand Thai Natural room at the Ayara Kamala pole retreat in Phuket. Spa bath, six nights, and the 2027 pole training week. From €1,475.",
+  },
+  "deluxe-pool-access": {
+    title: "Pool Access Room at Ayara Kamala",
+    description:
+      "63sqm pool-access room for the pole camp in Phuket. Six nights at Ayara Kamala plus the intermediate, advanced and pro training week. From €1,525.",
+  },
+  "grand-thai-private-pool": {
+    title: "Private Pool Suite, Phuket Pole Retreat",
+    description:
+      "Grand Thai suite with a private pool at the Ayara Kamala pole retreat. Six nights and the 2027 pole training week in Phuket. From €1,725.",
+  },
+};
 
 export default async function PackagePage({ params, searchParams }: Props) {
   const { slug } = await params;

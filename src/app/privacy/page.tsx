@@ -4,9 +4,9 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Privacy policy",
+  title: "Privacy Policy for This Pole Retreat",
   description:
-    "How Phuket Pole Retreats collects and uses booking, payment and website information for the Phuket pole camp. Payments are processed by Stripe; we do not store card numbers.",
+    "How Phuket Pole Retreats uses booking details for the Ayara Kamala pole camp, and that Meta and Google tags load only after you accept cookies.",
   path: "/privacy",
 });
 
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         ]}
       />
       <h1 className="text-4xl">Privacy policy</h1>
-      <p className="text-muted-foreground">Last updated: 10 November 2025 (aligned with the live site).</p>
+      <p className="text-muted-foreground">Last updated: 28 September 2026.</p>
       <p>
         At Phuket Pole Retreats, we are committed to protecting the privacy and security of our
         website visitors and customers. This policy outlines how we collect, use, and safeguard
@@ -49,6 +49,16 @@ export default function PrivacyPage() {
       <p>
         We do not sell your information. We share it with payment processors (Stripe) and as
         required by law, or to run the retreat (for example hotel rooming lists).
+      </p>
+      <h2 className="text-2xl">Cookies and advertising</h2>
+      <p>
+        This site does not load Meta or Google advertising tags until you choose Accept on the
+        cookie banner. Reject leaves those tags unloaded. Your choice is stored in this browser
+        (localStorage), not as a marketing cookie. If you accept, we may use the Meta Pixel and
+        Google tags (Analytics and/or Google Ads) to understand visits and to show you this retreat
+        again in ads. You can change your mind from Cookie choices in the footer. After you reject,
+        reload the page so any tags already loaded in that visit stop. We do not sell your booking
+        information.
       </p>
       <h2 className="text-2xl">Your rights</h2>
       <p>

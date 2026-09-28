@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -49,12 +49,14 @@ const NAV = [
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const [pathWhenOpened, setPathWhenOpened] = useState(pathname);
 
   // Close the mobile drawer whenever the route changes (covers same-page hash
   // links like /#instructors as well as full navigations).
-  useEffect(() => {
+  if (pathname !== pathWhenOpened) {
+    setPathWhenOpened(pathname);
     setMenuOpen(false);
-  }, [pathname]);
+  }
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -90,7 +92,11 @@ export function SiteHeader() {
           >
             <InstagramIcon className="size-5" />
           </a>
-          <Link href="/book" className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-full px-5")}>
+          <Link
+            href="/book"
+            data-book-cta
+            className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-full px-5")}
+          >
             {LIVE.bookNow}
           </Link>
         </nav>
@@ -98,6 +104,7 @@ export function SiteHeader() {
           <SheetTrigger
             className={cn(buttonVariants({ variant: "outline", size: "icon" }), "md:hidden")}
             aria-label="Open menu"
+            data-menu-button
           >
             <Menu />
           </SheetTrigger>
@@ -122,6 +129,7 @@ export function SiteHeader() {
               </a>
               <Link
                 href="/book"
+                data-book-cta
                 className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 rounded-full")}
                 onClick={closeMenu}
               >

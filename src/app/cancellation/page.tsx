@@ -4,9 +4,9 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Cancellation policy",
+  title: "Cancellation Policy for the Pole Camp",
   description:
-    "Phuket Pole Retreats bookings are non-refundable. If we cancel the pole camp, you may transfer to a future retreat. Raise issues during the stay with the retreat team.",
+    "Bookings for the Phuket pole retreat at Ayara Kamala are non-refundable. If the pole camp is cancelled, you may transfer to a future retreat.",
   path: "/cancellation",
 });
 

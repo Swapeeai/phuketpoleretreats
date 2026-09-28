@@ -4,11 +4,13 @@ import { buttonVariants } from "@/components/ui/button";
 import { formatEur, formatShortDate } from "@/lib/format";
 import { buildInstallmentPlan } from "@/lib/installments";
 import { getPackage } from "@/lib/retreat";
+import { canonicalUrl } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Booking confirmed",
+  title: "Booking received",
   robots: { index: false, follow: false },
+  alternates: { canonical: canonicalUrl("/checkout/success") },
 };
 
 type Props = {

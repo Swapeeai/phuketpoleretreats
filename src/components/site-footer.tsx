@@ -1,3 +1,4 @@
+import { CookieSettingsButton } from "@/components/cookie-banner";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 import { LIVE } from "@/lib/live-copy";
 import { WHATSAPP_ME } from "@/lib/whatsapp";
@@ -43,6 +44,9 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-col gap-2 text-sm">
+          <Link className="hover:text-primary hover:underline" href="/#instructors">
+            Instructors
+          </Link>
           <Link className="hover:text-primary hover:underline" href="/timetable">
             Timetable
           </Link>
@@ -64,6 +68,7 @@ export function SiteFooter() {
           <Link className="hover:text-primary hover:underline" href="/terms">
             Terms &amp; conditions
           </Link>
+          <CookieSettingsButton />
         </div>
       </div>
       <p className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground">

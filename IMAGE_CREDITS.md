@@ -26,6 +26,7 @@ Self-hosted JPEGs converted from photos already published on [phuketpoleretreats
 | `public/images/venue/aerial-hotel.jpg` | Aerial of Ayara Kamala Resort & Spa |
 | `public/images/venue/pool.jpg` | Private infinity pool at sunset |
 | `public/images/venue/ocean-room.jpg` | Deluxe ocean-view room |
+| `public/images/og/phuket-pole-retreat.jpg` | Open Graph image, 1200×630 crop of the studio and aerial stills above |
 
 ## Workshop timetable (retreat graphic)
 
