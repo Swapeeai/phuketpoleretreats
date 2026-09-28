@@ -45,6 +45,9 @@ export default async function SuccessPage({ searchParams }: Props) {
             ? "Stripe has taken your €500 deposit. The monthly payments below are charged automatically to the same card on the dates shown — you do not need to do anything, and Stripe emails a receipt each time. We will follow up with rooming and level grouping."
             : "Stripe has taken today’s payment. You will also get a receipt from Stripe. We will follow up with rooming and level grouping."}
       </p>
+      {isMock ? null : (
+        <p className="mt-3 text-muted-foreground">A confirmation was sent to your email.</p>
+      )}
       {pkg ? (
         <div className="mt-8 rounded-2xl border border-border bg-card p-6 text-sm">
           <p className="font-medium">{pkg.title}</p>

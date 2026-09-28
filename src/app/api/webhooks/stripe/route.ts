@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { sendBookingConfirmations } from "@/lib/booking-email";
 import { getStripe, hasLiveStripeKeys } from "@/lib/stripe";
 
 export async function POST(request: Request) {
@@ -49,6 +50,15 @@ export async function POST(request: Request) {
         await ensureCancelAt(subscriptionId, cancelAtUnix);
       }
       console.info("[stripe] checkout.session.completed", session.id);
+      // Mail runs only after cancel_at. A Resend failure must not 500 the
+      // webhook once the Stripe update has succeeded. Unpaid sessions are
+      // ignored inside sendBookingConfirmations. subscription.created does
+      // not send mail, so a paid checkout produces one pair of emails.
+      try {
+        await sendBookingConfirmations(event.id, session);
+      } catch (emailError) {
+        console.error("[booking-email] failed after Stripe update", session.id, emailError);
+      }
     } else if (event.type === "customer.subscription.created") {
       const sub = event.data.object as Stripe.Subscription;
       const cancelAtUnix = Number(sub.metadata?.cancelAtUnix);
