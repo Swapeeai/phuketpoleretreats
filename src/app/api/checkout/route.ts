@@ -185,6 +185,10 @@ export async function POST(request: Request) {
         monthlyCount: String(plan.monthlyCount),
         remainingCents: String(plan.remainingCents),
         cancelAtUnix: String(plan.cancelAtUnix),
+        // Next card charge is monthlyBaseCents at firstMonthlyUnix. The rounding
+        // remainder is charged today with the deposit, not on that date.
+        firstMonthlyUnix: String(plan.firstMonthlyUnix),
+        monthlyBaseCents: String(plan.monthlyBaseCents),
       },
       subscription_data: {
         trial_end: plan.firstMonthlyUnix,
@@ -192,6 +196,8 @@ export async function POST(request: Request) {
           ...metadata,
           monthlyCount: String(plan.monthlyCount),
           cancelAtUnix: String(plan.cancelAtUnix),
+          firstMonthlyUnix: String(plan.firstMonthlyUnix),
+          monthlyBaseCents: String(plan.monthlyBaseCents),
         },
         description: `${productName}. ${plan.summary}`,
       },

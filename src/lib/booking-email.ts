@@ -1,15 +1,15 @@
 import "server-only";
 import { Resend } from "resend";
 import type Stripe from "stripe";
-import { formatEur } from "@/lib/format";
+import { formatEur, formatLongDate } from "@/lib/format";
 import { getPackage, RETREAT } from "@/lib/retreat";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 
 /**
- * Booking mail is sent only from the Stripe webhook, after
- * checkout.session.completed and only when payment_status is "paid".
- * Organizer inboxes come from BOOKING_NOTIFY_EMAILS. Nothing in this
- * module calls WhatsApp.
+ * Booking mail is sent from the Stripe webhook and the checkout success page
+ * when payment_status is "paid" or "no_payment_required". Both paths share a
+ * Checkout Session idempotency key. Organizer inboxes come from
+ * BOOKING_NOTIFY_EMAILS. Nothing in this module calls WhatsApp.
  */
 
 const DEFAULT_FROM = "Phuket Pole Retreats <bookings@phuketpoleretreats.com>";
@@ -304,21 +304,47 @@ type Schedule = {
   monthlyBaseCents: number;
   adjustmentCents: number;
   expectedTodayCents: number;
+  /** Absent on sessions created before this field was stored. Do not invent a date. */
+  firstMonthlyUnix: number | null;
 };
+
+function positiveInt(value: string | undefined) {
+  if (!value || !/^\d+$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+}
 
 function installmentSchedule(metadata: Record<string, string>): Schedule | null {
   const monthlyCount = Number(metadata.monthlyCount);
   const remainingCents = Number(metadata.remainingCents);
   if (!Number.isInteger(monthlyCount) || monthlyCount <= 0) return null;
   if (!Number.isInteger(remainingCents) || remainingCents < 0) return null;
-  const monthlyBaseCents = Math.floor(remainingCents / monthlyCount);
+  const computedBase = Math.floor(remainingCents / monthlyCount);
+  const fromMetadata = positiveInt(metadata.monthlyBaseCents);
+  const monthlyBaseCents =
+    fromMetadata != null && fromMetadata * monthlyCount <= remainingCents
+      ? fromMetadata
+      : computedBase;
   const adjustmentCents = remainingCents - monthlyBaseCents * monthlyCount;
   return {
     monthlyCount,
     monthlyBaseCents,
     adjustmentCents,
     expectedTodayCents: RETREAT.depositCents + adjustmentCents,
+    firstMonthlyUnix: positiveInt(metadata.firstMonthlyUnix),
   };
+}
+
+function formatUnixUtc(unix: number) {
+  const iso = new Date(unix * 1000).toISOString().slice(0, 10);
+  return `${formatLongDate(iso)}, UTC`;
+}
+
+function monthlyFollowSentence(count: number) {
+  if (count === 1) {
+    return "1 monthly charge follows. It is automatic on the same card until the balance is paid.";
+  }
+  return `${count} monthly charges follow. They are automatic on the same card until the balance is paid.`;
 }
 
 function chargeNote(isDeposit: boolean, schedule: Schedule | null, amountTotal: number | null) {
@@ -344,6 +370,11 @@ function detailLines(input: {
   includesHotel: boolean;
   reference: string;
 }) {
+  const nextChargeKnown =
+    input.isDeposit &&
+    input.schedule != null &&
+    input.schedule.firstMonthlyUnix != null &&
+    input.schedule.monthlyBaseCents > 0;
   const lines = [
     input.guestName ? `Guest: ${input.guestName}` : "",
     input.guestTo ? `Email: ${input.guestTo}` : "",
@@ -351,27 +382,40 @@ function detailLines(input: {
     input.level ? `Pole level: ${input.level}` : "",
     `Package: ${input.packageTitle}`,
     input.occupancy ? `Occupancy: ${input.occupancy}` : "",
-    input.paidNow ? `Amount paid now: ${input.paidNow}` : "",
+    input.paidNow
+      ? nextChargeKnown
+        ? `Amount paid today: ${input.paidNow}.`
+        : `Amount paid now: ${input.paidNow}`
+      : "",
     `Currency: ${input.currency === "EUR" ? "EUR" : input.currency}`,
     `Payment: ${input.isDeposit ? "€500 deposit, then automatic monthly charges" : "Pay in full"}`,
   ];
 
   if (input.isDeposit && input.schedule) {
-    if (
-      input.paidNow &&
-      input.schedule.adjustmentCents > 0 &&
-      input.paidNow === formatMoney(input.schedule.expectedTodayCents, "eur")
-    ) {
+    if (nextChargeKnown && input.schedule.firstMonthlyUnix != null) {
+      // The next charge is the recurring amount only. Any rounding remainder
+      // was collected today with the deposit and is already inside "paid today".
       lines.push(
-        `Deposit paid: ${formatEur(RETREAT.depositCents)} plus ${formatEur(input.schedule.adjustmentCents)} so the total matches the package price`,
+        `Next charge on the card: ${formatEur(input.schedule.monthlyBaseCents)} on ${formatUnixUtc(input.schedule.firstMonthlyUnix)}.`,
       );
-    } else if (input.paidNow) {
-      lines.push(`Deposit paid: ${input.paidNow}`);
+      lines.push(monthlyFollowSentence(input.schedule.monthlyCount));
+    } else {
+      if (
+        input.paidNow &&
+        input.schedule.adjustmentCents > 0 &&
+        input.paidNow === formatMoney(input.schedule.expectedTodayCents, "eur")
+      ) {
+        lines.push(
+          `Deposit paid: ${formatEur(RETREAT.depositCents)} plus ${formatEur(input.schedule.adjustmentCents)} so the total matches the package price`,
+        );
+      } else if (input.paidNow) {
+        lines.push(`Deposit paid: ${input.paidNow}`);
+      }
+      if (input.schedule.monthlyBaseCents > 0) {
+        lines.push(`Monthly amount: ${formatEur(input.schedule.monthlyBaseCents)}`);
+      }
+      lines.push(`Remaining charges: ${input.schedule.monthlyCount}`);
     }
-    if (input.schedule.monthlyBaseCents > 0) {
-      lines.push(`Monthly amount: ${formatEur(input.schedule.monthlyBaseCents)}`);
-    }
-    lines.push(`Remaining charges: ${input.schedule.monthlyCount}`);
   }
 
   lines.push(`Camp and workshops: ${RETREAT.headlineDates}`);
