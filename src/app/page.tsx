@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BoatDay } from "@/components/boat-day";
 import { FaqList } from "@/components/faq-list";
+import { HeroVideo } from "@/components/hero-video";
 import { InstagramGallery } from "@/components/instagram-gallery";
 import { JsonLd } from "@/components/json-ld";
 import { ScenicBand, ScenicSection } from "@/components/scenic";
@@ -35,16 +36,9 @@ export default function HomePage() {
     <>
       <JsonLd data={eventJsonLd()} />
       <section className="relative isolate min-h-[100svh] w-full overflow-hidden bg-black">
-        <Image
-          src="/images/hero-karst.jpg"
-          alt="Limestone karsts rising from turquoise water off the Phuket coast"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-black/50" />
-        <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-4xl flex-col items-center justify-center px-4 py-28 text-center text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] sm:px-6">
+        <HeroVideo />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/35" />
+        <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-4xl flex-col items-center justify-center px-4 py-28 text-center text-white sm:px-6">
           <p className="hero-copy text-sm uppercase tracking-[0.35em] text-white/85">{LIVE.welcome}</p>
           <h1 className="hero-copy mt-4 font-heading text-5xl leading-[1.05] sm:text-7xl">{LIVE.siteName}</h1>
           <p className="hero-copy mt-6 text-lg font-medium sm:text-2xl">{LIVE.heroDates}</p>
@@ -61,8 +55,6 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
-      <ScenicBand src={SCENERY.kamalaIslands.src} alt={SCENERY.kamalaIslands.alt} />
 
       <section id="instructors" className="bg-sand py-24 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
