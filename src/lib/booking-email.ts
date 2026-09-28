@@ -242,13 +242,39 @@ async function deliver(
       { idempotencyKey: input.idempotencyKey },
     );
     if (error) {
-      console.error(`[booking-email] ${input.logLabel} failed`, input.sessionId, error);
+      console.error(
+        `[booking-email] ${input.logLabel} failed session=${input.sessionId} ${describeResendError(error)}`,
+      );
       return;
     }
     console.info(`[booking-email] ${input.logLabel} sent`, input.sessionId, input.to.length);
   } catch (error) {
-    console.error(`[booking-email] ${input.logLabel} failed`, input.sessionId, error);
+    console.error(
+      `[booking-email] ${input.logLabel} failed session=${input.sessionId} ${describeResendError(error)}`,
+    );
   }
+}
+
+/** One line Vercel can search. Resend returns { message, name, statusCode } and does not create an email. */
+function describeResendError(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return error instanceof Error ? `message=${error.message}` : "message=unknown";
+  }
+  const record = error as { message?: unknown; name?: unknown; statusCode?: unknown };
+  const message = typeof record.message === "string" ? record.message : "";
+  const name = typeof record.name === "string" ? record.name : "";
+  const status =
+    typeof record.statusCode === "number" || typeof record.statusCode === "string"
+      ? String(record.statusCode)
+      : "";
+  const parts = [
+    status ? `status=${status}` : "",
+    name ? `name=${name}` : "",
+    message ? `message=${message}` : "",
+  ].filter(Boolean);
+  if (parts.length > 0) return parts.join(" ");
+  if (error instanceof Error && error.message) return `message=${error.message}`;
+  return "message=unknown";
 }
 
 type Schedule = {
