@@ -124,6 +124,8 @@ export default function HomePage() {
         </div>
       </ScenicSection>
 
+      <WorkshopTimetable />
+
       <section className="bg-background py-24 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="text-4xl sm:text-5xl">Packages</h2>
@@ -158,7 +160,6 @@ export default function HomePage() {
       </section>
 
       <ScenicBand src={SCENERY.emeraldWater.src} alt={SCENERY.emeraldWater.alt} />
-      <WorkshopTimetable />
 
       <BoatDay />
 
