@@ -66,7 +66,7 @@ Webhook (when keys exist): `https://YOUR_DOMAIN/api/webhooks/stripe` — events 
 ## How payments work
 
 - **Pay in full:** Stripe Checkout `mode: payment` charges the package total today.
-- **€500 deposit today:** Stripe Checkout `mode: subscription`. First invoice is the **€500 deposit**. Remaining balance is billed monthly (`billing_cycle_anchor`) and the subscription `cancel_at` is set after the last payment (on or before **28 November 2026**, 60 days before check-in).
+- **€500 deposit today:** Stripe Checkout `mode: subscription`. First invoice is the **deposit** (plus any cent adjustment). Then at most **3** automatic charges, on the same day of each following month. The January 2027 limit can cut that to 2 or 1. If no charge date is left, pay in full. Nothing is billed in February 2027 or later. `cancel_at` is set after the last of those charges.
 
 Packages, prices, instructors, dates, and policies match the live site (EUR).
 

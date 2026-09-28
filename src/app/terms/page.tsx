@@ -22,7 +22,7 @@ export default function TermsPage() {
       />
       <h1 className="text-4xl">Terms &amp; conditions</h1>
       <p className="text-muted-foreground">
-        Last updated: 25 September 2026. These terms describe how booking the Phuket Pole Art Retreat
+        Last updated: 28 September 2026. These terms describe how booking the Phuket Pole Art Retreat
         works. By booking, you agree to them.
       </p>
 
@@ -49,18 +49,23 @@ export default function TermsPage() {
           <strong>Pay in full</strong> — the whole package price is charged today by card.
         </li>
         <li>
-          <strong>€500 deposit today, then monthly payments</strong> — a €500 deposit is charged
-          today and the remaining balance is then charged <strong>automatically to the same card</strong>{" "}
-          in equal monthly payments. You do not need to do anything for each payment. The monthly
-          payments finish on or before <strong>28 November 2026</strong> (60 days before the
-          retreat). The exact number of payments, the amount, and the final date are shown on the
-          booking page before you pay.
+          <strong>€500 deposit today, then monthly payments</strong> — the deposit is charged today.
+          After that there are at most <strong>3</strong> automatic charges, on the same card, on the
+          same day of each following month. A deposit on 22 August 2026 is charged on 22 September,
+          22 October, and 22 November, and then stops. A deposit on 22 November 2026 is charged on
+          22 December and 22 January 2027. Nothing is charged in February 2027 or later. If the next
+          same day would fall after January 2027, installments are not available and you pay in full.
+          The remaining balance is split across however many of those charges exist, so fewer charges
+          means a larger amount each month. Every date and amount is shown on the booking page before
+          you pay.
         </li>
       </ul>
       <p>
         Card payments are processed by <strong>Stripe</strong>. We never see or store your card
         number. When you choose the deposit option, you authorise Stripe to charge the scheduled
-        monthly payments to your card automatically until the balance is paid.
+        monthly payments to your card automatically until the balance is paid. The card is charged
+        on those dates unless you contact the organiser on WhatsApp at {WHATSAPP_DISPLAY} before the
+        charge date.
       </p>
 
       <h2 className="text-2xl">If a monthly payment fails</h2>

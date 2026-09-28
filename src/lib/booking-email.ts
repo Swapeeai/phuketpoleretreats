@@ -86,7 +86,7 @@ export function buildBookingEmails(session: BookingSession): BookingEmails {
   const guestLines = [
     `Hello ${displayName},`,
     isDeposit
-      ? "Your Phuket Pole Retreat booking is confirmed. This payment is the €500 deposit, not pay in full."
+      ? "Your Phuket Pole Retreat booking is confirmed. This payment is the deposit taken today, not pay in full."
       : "Your Phuket Pole Retreat booking is confirmed. This payment is pay in full.",
     ...chargeNote(isDeposit, schedule, session.amount_total),
     "",
@@ -306,7 +306,33 @@ type Schedule = {
   expectedTodayCents: number;
   /** Absent on sessions created before this field was stored. Do not invent a date. */
   firstMonthlyUnix: number | null;
+  /** Calendar date of the next charge, taken from Stripe metadata. */
+  nextChargeIso: string | null;
+  nextChargeCents: number | null;
+  /** Last of the stored charges. Absent on older sessions. Do not invent dates in between. */
+  lastChargeIso: string | null;
+  /** Every later charge, from Stripe metadata. Null when the session did not store them. */
+  charges: { iso: string; cents: number }[] | null;
 };
+
+const CHANGE_BEFORE_CHARGE = `If you need a change, contact the organiser on WhatsApp ${WHATSAPP_DISPLAY} before the charge date. Otherwise the card is charged automatically.`;
+
+function isoDate(value: string | undefined) {
+  return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+}
+
+function parseChargeSchedule(raw: string | undefined) {
+  if (!raw?.trim()) return null;
+  const rows: { iso: string; cents: number }[] = [];
+  for (const part of raw.split(",")) {
+    const match = /^(\d{4}-\d{2}-\d{2}):(\d+)$/.exec(part.trim());
+    if (!match) return null;
+    const cents = Number(match[2]);
+    if (!Number.isSafeInteger(cents) || cents <= 0) return null;
+    rows.push({ iso: match[1], cents });
+  }
+  return rows.length > 0 ? rows : null;
+}
 
 function positiveInt(value: string | undefined) {
   if (!value || !/^\d+$/.test(value)) return null;
@@ -326,18 +352,29 @@ function installmentSchedule(metadata: Record<string, string>): Schedule | null 
       ? fromMetadata
       : computedBase;
   const adjustmentCents = remainingCents - monthlyBaseCents * monthlyCount;
+  const stored = parseChargeSchedule(metadata.chargeSchedule);
+  const firstMonthlyUnix = positiveInt(metadata.firstMonthlyUnix);
+  const nextFromUnix = firstMonthlyUnix
+    ? new Date(firstMonthlyUnix * 1000).toISOString().slice(0, 10)
+    : null;
+  const sameStoredAmount = stored != null && stored.every((row) => row.cents === stored[0].cents);
   return {
-    monthlyCount,
-    monthlyBaseCents,
+    monthlyCount: stored?.length ?? monthlyCount,
+    monthlyBaseCents: sameStoredAmount ? stored[0].cents : monthlyBaseCents,
     adjustmentCents,
     expectedTodayCents: RETREAT.depositCents + adjustmentCents,
-    firstMonthlyUnix: positiveInt(metadata.firstMonthlyUnix),
+    firstMonthlyUnix,
+    nextChargeIso: stored?.[0]?.iso ?? nextFromUnix,
+    nextChargeCents: stored?.[0]?.cents ?? (monthlyBaseCents > 0 ? monthlyBaseCents : null),
+    lastChargeIso: stored?.[stored.length - 1]?.iso ?? isoDate(metadata.lastMonthlyIso),
+    charges: stored,
   };
 }
 
-function formatUnixUtc(unix: number) {
-  const iso = new Date(unix * 1000).toISOString().slice(0, 10);
-  return `${formatLongDate(iso)}, UTC`;
+function joinDates(dates: string[]) {
+  if (dates.length <= 1) return dates[0] ?? "";
+  if (dates.length === 2) return `${dates[0]} and ${dates[1]}`;
+  return `${dates.slice(0, -1).join(", ")}, and ${dates[dates.length - 1]}`;
 }
 
 function monthlyFollowSentence(count: number) {
@@ -349,7 +386,11 @@ function monthlyFollowSentence(count: number) {
 
 function chargeNote(isDeposit: boolean, schedule: Schedule | null, amountTotal: number | null) {
   if (!isDeposit) return [];
-  const lines = ["The card will be charged automatically until the balance is paid."];
+  const lines: string[] = [];
+  const hasNextCharge = Boolean(schedule?.nextChargeIso && schedule.nextChargeCents);
+  if (!hasNextCharge) {
+    lines.push("The card will be charged automatically until the balance is paid.");
+  }
   if (schedule && amountTotal != null && amountTotal !== schedule.expectedTodayCents) {
     lines.push("The amount paid now is what Stripe collected today.");
   }
@@ -370,11 +411,6 @@ function detailLines(input: {
   includesHotel: boolean;
   reference: string;
 }) {
-  const nextChargeKnown =
-    input.isDeposit &&
-    input.schedule != null &&
-    input.schedule.firstMonthlyUnix != null &&
-    input.schedule.monthlyBaseCents > 0;
   const lines = [
     input.guestName ? `Guest: ${input.guestName}` : "",
     input.guestTo ? `Email: ${input.guestTo}` : "",
@@ -383,8 +419,8 @@ function detailLines(input: {
     `Package: ${input.packageTitle}`,
     input.occupancy ? `Occupancy: ${input.occupancy}` : "",
     input.paidNow
-      ? nextChargeKnown
-        ? `Amount paid today: ${input.paidNow}.`
+      ? input.isDeposit
+        ? `Amount taken today: ${input.paidNow}.`
         : `Amount paid now: ${input.paidNow}`
       : "",
     `Currency: ${input.currency === "EUR" ? "EUR" : input.currency}`,
@@ -392,13 +428,40 @@ function detailLines(input: {
   ];
 
   if (input.isDeposit && input.schedule) {
-    if (nextChargeKnown && input.schedule.firstMonthlyUnix != null) {
-      // The next charge is the recurring amount only. Any rounding remainder
-      // was collected today with the deposit and is already inside "paid today".
+    const nextIso = input.schedule.nextChargeIso;
+    const nextCents = input.schedule.nextChargeCents;
+    const lastIso = input.schedule.lastChargeIso;
+    const storedCharges = input.schedule.charges;
+    if (storedCharges && storedCharges.length > 0 && nextIso && nextCents) {
+      // Dates and amounts come from the Checkout Session. The cent adjustment
+      // was collected today and is not part of these charges.
       lines.push(
-        `Next charge on the card: ${formatEur(input.schedule.monthlyBaseCents)} on ${formatUnixUtc(input.schedule.firstMonthlyUnix)}.`,
+        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
+      );
+      const sameAmount = storedCharges.every((charge) => charge.cents === storedCharges[0].cents);
+      if (sameAmount) {
+        lines.push(
+          `The same amount is taken on ${joinDates(storedCharges.map((charge) => formatLongDate(charge.iso)))}.`,
+        );
+      }
+      for (const charge of storedCharges) {
+        lines.push(`${formatLongDate(charge.iso)}: ${formatEur(charge.cents)}`);
+      }
+      lines.push(CHANGE_BEFORE_CHARGE);
+    } else if (nextIso && nextCents && lastIso) {
+      lines.push(
+        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
+      );
+      lines.push(
+        `The same amount is taken on that day each month through ${formatLongDate(lastIso)}.`,
+      );
+      lines.push(CHANGE_BEFORE_CHARGE);
+    } else if (nextIso && nextCents) {
+      lines.push(
+        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
       );
       lines.push(monthlyFollowSentence(input.schedule.monthlyCount));
+      lines.push(CHANGE_BEFORE_CHARGE);
     } else {
       if (
         input.paidNow &&
@@ -415,6 +478,7 @@ function detailLines(input: {
         lines.push(`Monthly amount: ${formatEur(input.schedule.monthlyBaseCents)}`);
       }
       lines.push(`Remaining charges: ${input.schedule.monthlyCount}`);
+      lines.push(CHANGE_BEFORE_CHARGE);
     }
   }
 

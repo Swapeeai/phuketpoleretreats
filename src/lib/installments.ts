@@ -1,3 +1,4 @@
+import { formatEur, formatLongDate } from "@/lib/format";
 import { RETREAT } from "@/lib/retreat";
 
 export type InstallmentCharge = {
@@ -10,19 +11,25 @@ export type InstallmentPlan =
   | {
       available: true;
       depositCents: number;
+      /** Deposit plus any cent adjustment. This is what the card is charged today. */
+      todayCents: number;
       remainingCents: number;
       monthlyCount: number;
-      /** Fixed monthly recurring amount charged by Stripe every month (the floor). */
+      /** Same amount on every later charge. The cent adjustment is not included. */
       monthlyBaseCents: number;
       /**
-       * Rounding remainder (remaining − monthlyBaseCents × count). Charged ONCE
-       * as a one-time line item on the first invoice so the collected total
-       * equals the advertised price exactly — never over by a cent.
+       * Rounding remainder (remaining − monthlyBaseCents × count). Charged once
+       * today with the deposit, never on the next monthly charge.
        */
       firstInvoiceExtraCents: number;
       charges: InstallmentCharge[];
       firstMonthlyUnix: number;
+      firstMonthlyIso: string;
+      lastMonthlyUnix: number;
+      lastMonthlyIso: string;
       cancelAtUnix: number;
+      /** Monthly dates and amounts actually charged, `YYYY-MM-DD:cents` joined by commas. */
+      chargeSchedule: string;
       summary: string;
     }
   | {
@@ -38,22 +45,19 @@ function toIso(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+/**
+ * Same calendar day, `months` later, counted from the original date.
+ * A month that is shorter uses its last day (31 January → 28 February).
+ */
 function addUtcMonths(date: Date, months: number) {
-  const next = utcDate(
-    date.getUTCFullYear(),
-    date.getUTCMonth() + months,
-    date.getUTCDate(),
-  );
-  if (next.getUTCDate() !== date.getUTCDate()) {
-    return utcDate(next.getUTCFullYear(), next.getUTCMonth() + 1, 0);
-  }
-  return next;
+  const day = date.getUTCDate();
+  const monthIndex = date.getUTCMonth() + months;
+  const year = date.getUTCFullYear();
+  const lastDay = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  return utcDate(year, monthIndex, Math.min(day, lastDay));
 }
 
-export function buildInstallmentPlan(
-  totalCents: number,
-  now = new Date(),
-): InstallmentPlan {
+export function buildInstallmentPlan(totalCents: number, now = new Date()): InstallmentPlan {
   const depositCents = RETREAT.depositCents;
   const remainingCents = totalCents - depositCents;
 
@@ -64,69 +68,69 @@ export function buildInstallmentPlan(
     };
   }
 
-  const deadline = new Date(`${RETREAT.balanceDeadlineIso}T00:00:00Z`);
   const today = utcDate(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const firstMonthly = addUtcMonths(today, 1);
+  const deadline = new Date(`${RETREAT.balanceDeadlineIso}T00:00:00Z`);
   const monthlyDates: Date[] = [];
-  let cursor = firstMonthly;
 
-  while (cursor.getTime() <= deadline.getTime()) {
-    monthlyDates.push(cursor);
-    cursor = addUtcMonths(cursor, 1);
+  // At most 3 charges, on the same calendar day in each following month.
+  // A 22 August deposit is 22 September, 22 October, and 22 November — then stop.
+  // The January 2027 limit drops any later date, so a 22 November deposit is only
+  // 22 December and 22 January. A 22 January deposit has no allowed date left.
+  for (let offset = 1; offset <= 3; offset += 1) {
+    const next = addUtcMonths(today, offset);
+    if (next.getTime() > deadline.getTime()) break;
+    monthlyDates.push(next);
   }
 
   if (monthlyDates.length === 0) {
     return {
       available: false,
       reason:
-        "Monthly installments need at least one billing date before 28 November 2026 (60 days before check-in). Pay in full to book this close to the retreat.",
+        "Installments are not available. There is no charge date left on or before the same day in January 2027. Pay in full.",
     };
   }
 
   const monthlyCount = monthlyDates.length;
-  // Fixed recurring amount = floor; the leftover cents ride on the first invoice
-  // only, so deposit + remainder + base × count == total exactly (no overcharge).
   const monthlyBaseCents = Math.floor(remainingCents / monthlyCount);
   const firstInvoiceExtraCents = remainingCents - monthlyBaseCents * monthlyCount;
-  const monthlyCharges: InstallmentCharge[] = monthlyDates.map((date, index) => ({
+  if (monthlyBaseCents <= 0) {
+    return {
+      available: false,
+      reason: "Could not build a monthly schedule. Pay in full today.",
+    };
+  }
+
+  const todayCents = depositCents + firstInvoiceExtraCents;
+  const monthlyCharges: InstallmentCharge[] = monthlyDates.map((date) => ({
     isoDate: toIso(date),
-    amountCents: monthlyBaseCents + (index === 0 ? firstInvoiceExtraCents : 0),
+    amountCents: monthlyBaseCents,
     label: "monthly" as const,
   }));
-
-  const lastMonthly = monthlyDates[monthlyDates.length - 1];
   const charges: InstallmentCharge[] = [
-    {
-      isoDate: toIso(today),
-      amountCents: depositCents,
-      label: "deposit",
-    },
+    { isoDate: toIso(today), amountCents: todayCents, label: "deposit" },
     ...monthlyCharges,
   ];
 
-  const monthlyLabel =
-    monthlyCount === 1
-      ? `${formatMonth(monthlyCharges[0].isoDate)}`
-      : `${formatMonth(monthlyCharges[0].isoDate)}–${formatMonth(monthlyCharges[monthlyCount - 1].isoDate)}`;
+  const first = monthlyDates[0];
+  const last = monthlyDates[monthlyDates.length - 1];
+  const firstMonthlyIso = toIso(first);
+  const lastMonthlyIso = toIso(last);
 
   return {
     available: true,
     depositCents,
+    todayCents,
     remainingCents,
     monthlyCount,
     monthlyBaseCents,
     firstInvoiceExtraCents,
     charges,
-    firstMonthlyUnix: Math.floor(monthlyDates[0].getTime() / 1000),
-    cancelAtUnix: Math.floor(lastMonthly.getTime() / 1000) + 3 * 24 * 60 * 60,
-    summary: `€500 deposit today, then ${monthlyCount} automatic monthly payment${monthlyCount === 1 ? "" : "s"} (${monthlyLabel}) charged to the same card for the remaining balance.`,
+    firstMonthlyUnix: Math.floor(first.getTime() / 1000),
+    firstMonthlyIso,
+    lastMonthlyUnix: Math.floor(last.getTime() / 1000),
+    lastMonthlyIso,
+    cancelAtUnix: Math.floor(last.getTime() / 1000) + 3 * 24 * 60 * 60,
+    chargeSchedule: monthlyCharges.map((charge) => `${charge.isoDate}:${charge.amountCents}`).join(","),
+    summary: `${formatEur(todayCents)} today, then ${monthlyCount} automatic charge${monthlyCount === 1 ? "" : "s"} of ${formatEur(monthlyBaseCents)}. Last charge ${formatLongDate(lastMonthlyIso)}.`,
   };
-}
-
-function formatMonth(isoDate: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${isoDate}T00:00:00Z`));
 }

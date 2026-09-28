@@ -11,8 +11,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { buildInstallmentPlan } from "@/lib/installments";
 import { trackBeginCheckout } from "@/lib/marketing";
-import { formatEur, formatShortDate } from "@/lib/format";
+import { formatEur, formatLongDate } from "@/lib/format";
 import { RETREAT, type Level, type Occupancy, type PaymentPlan, type RetreatPackage } from "@/lib/retreat";
+import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { getVariant } from "@/lib/retreat";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
   const [level, setLevel] = useState<Level | "">("");
   const [roommateNotes, setRoommateNotes] = useState("");
   const [acceptPolicy, setAcceptPolicy] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState<string | null>(cancelled ? "Checkout was cancelled. Nothing was charged." : null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -47,6 +49,9 @@ export function BookingForm({ pkg, cancelled }: Props) {
     () => (totalCents ? buildInstallmentPlan(totalCents) : null),
     [totalCents],
   );
+
+  const activePlan: PaymentPlan =
+    paymentPlan === "installments" && installment && !installment.available ? "full" : paymentPlan;
 
   /** Move focus to the first field the dancer still needs to fill in. */
   function focusField(field: string) {
@@ -79,6 +84,12 @@ export function BookingForm({ pkg, cancelled }: Props) {
         message: "Please confirm you have read the cancellation policy. Bookings are non-refundable.",
       });
     }
+    if (!acceptTerms) {
+      missing.push({
+        field: "acceptTerms",
+        message: "Please confirm you have read and agree to the terms and conditions.",
+      });
+    }
 
     const first = missing[0];
     if (first) {
@@ -101,7 +112,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
         body: JSON.stringify({
           packageSlug: pkg.slug,
           occupancy: pkg.includesHotel ? occupancy : null,
-          paymentPlan,
+          paymentPlan: activePlan,
           fullName,
           email,
           phone,
@@ -109,6 +120,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
           level,
           roommateNotes,
           acceptPolicy,
+          acceptTerms,
         }),
       });
       const data = (await response.json()) as { url?: string; error?: string; field?: string };
@@ -214,11 +226,12 @@ export function BookingForm({ pkg, cancelled }: Props) {
       <fieldset className="space-y-3">
         <legend className="font-heading text-xl">How would you like to pay?</legend>
         <p className="text-sm leading-relaxed text-[#272727]">
-          Pay in full, or €500 deposit today and monthly payments after — finishing by{" "}
-          {formatShortDate(RETREAT.balanceDeadlineIso)}, 60 days before the retreat.
+          Pay in full, or a €500 deposit today and then at most 3 automatic charges on the same day
+          of each following month. The January 2027 limit can cut that to fewer charges. Nothing is
+          charged in February or later. Fewer charges means a larger amount each month.
         </p>
         <RadioGroup
-          value={paymentPlan}
+          value={activePlan}
           onValueChange={(value) => {
             if (value === "full" || value === "installments") setPaymentPlan(value);
           }}
@@ -228,7 +241,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
             data-testid="plan-full"
             onClick={() => setPaymentPlan("full")}
             className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
-              paymentPlan === "full"
+              activePlan === "full"
                 ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(27,127,120,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
@@ -250,7 +263,7 @@ export function BookingForm({ pkg, cancelled }: Props) {
               if (installment?.available !== false) setPaymentPlan("installments");
             }}
             className={`flex cursor-pointer flex-col gap-2 border bg-card p-5 transition-shadow ${
-              paymentPlan === "installments"
+              activePlan === "installments"
                 ? "border-primary ring-2 ring-primary/25 shadow-[0_0_0_4px_rgba(27,127,120,0.12)]"
                 : "border-border hover:border-primary/40"
             }`}
@@ -271,15 +284,22 @@ export function BookingForm({ pkg, cancelled }: Props) {
                 ? installment.summary
                 : installment?.reason ?? "Choose occupancy to see the monthly payments."}
             </span>
+            <span className="pl-6 text-sm text-[#3e3e3e]">
+              The card is charged on these dates unless you contact the organiser on WhatsApp first.
+            </span>
           </label>
         </RadioGroup>
-        {paymentPlan === "installments" && installment?.available ? (
+        {activePlan === "installments" && installment?.available ? (
           <ol className="space-y-2 border border-border bg-sand p-4 text-sm">
-            {installment.charges.map((charge) => (
+            {installment.charges.map((charge, index) => (
               <li key={`${charge.label}-${charge.isoDate}`} className="flex justify-between gap-4">
                 <span>
-                  {charge.label === "deposit" ? "€500 deposit today" : "Monthly payment"} ·{" "}
-                  {formatShortDate(charge.isoDate)}
+                  {charge.label === "deposit"
+                    ? "Deposit today"
+                    : index === 1
+                      ? "Next card charge"
+                      : "Monthly charge"}{" "}
+                  · {formatLongDate(charge.isoDate)}
                 </span>
                 <span className="font-medium">{formatEur(charge.amountCents)}</span>
               </li>
@@ -292,23 +312,26 @@ export function BookingForm({ pkg, cancelled }: Props) {
             ) : null}
           </ol>
         ) : null}
-        {paymentPlan === "installments" && installment?.available ? (
+        {activePlan === "installments" && installment?.available ? (
           <p className="text-xs leading-relaxed text-[#3e3e3e]">
-            The €500 deposit is charged today. Each monthly payment above is then charged{" "}
-            <strong className="font-medium">automatically to the same card</strong> on the date
-            shown — you do not need to do anything, and Stripe emails you a receipt for every
-            payment. That is {installment.monthlyCount} monthly payment
-            {installment.monthlyCount === 1 ? "" : "s"} of{" "}
-            {formatEur(installment.charges[1].amountCents)}, finishing on{" "}
-            {formatShortDate(installment.charges[installment.charges.length - 1].isoDate)} — on or
-            before {formatShortDate(RETREAT.balanceDeadlineIso)}, 60 days before the retreat. All
+            {formatEur(installment.todayCents)} is taken today. The next charge is{" "}
+            {formatEur(installment.monthlyBaseCents)} on {formatLongDate(installment.firstMonthlyIso)}.
+            The same amount is then taken on each date above, through{" "}
+            {formatLongDate(installment.lastMonthlyIso)}. That is {installment.monthlyCount} charge
+            {installment.monthlyCount === 1 ? "" : "s"} after today, which is the most there will be.
+            The card is charged on these dates unless you contact the organiser on WhatsApp{" "}
+            {WHATSAPP_DISPLAY} before the charge date. Otherwise it is charged automatically. All
             payments, including the deposit, are non-refundable.
+            {installment.firstInvoiceExtraCents > 0
+              ? ` Today's amount includes the €500 deposit and ${formatEur(installment.firstInvoiceExtraCents)} so the total matches the price. That extra is not part of the next charge.`
+              : ""}
           </p>
         ) : (
           <p className="text-xs leading-relaxed text-[#3e3e3e]">
-            DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before
-            the start of the retreat. Last monthly payment is on or before{" "}
-            {formatShortDate(RETREAT.balanceDeadlineIso)}. Payments are non-refundable.
+            {installment && !installment.available
+              ? installment.reason
+              : "The deposit option is at most 3 automatic charges on the same day of the following months, and none after the same day in January 2027. The card is charged on those dates unless you contact the organiser first. If there is no charge date left, pay in full."}{" "}
+            Payments are non-refundable.
           </p>
         )}
       </fieldset>
@@ -420,6 +443,24 @@ export function BookingForm({ pkg, cancelled }: Props) {
         </span>
       </label>
 
+      <label className="flex items-start gap-3 text-sm" data-field="acceptTerms">
+        <Checkbox
+          id="acceptTerms"
+          checked={acceptTerms}
+          onCheckedChange={(value) => setAcceptTerms(Boolean(value))}
+          className="mt-0.5"
+          aria-label="I have read and agree to the terms and conditions."
+          aria-invalid={fieldError === "acceptTerms"}
+        />
+        <span>
+          I have read and agree to the{" "}
+          <Link href="/terms" className="underline underline-offset-2">
+            terms and conditions
+          </Link>
+          .
+        </span>
+      </label>
+
       <button
         type="button"
         data-testid="submit-booking"
@@ -429,9 +470,9 @@ export function BookingForm({ pkg, cancelled }: Props) {
       >
         {submitting
           ? "Starting checkout…"
-          : paymentPlan === "full"
+          : activePlan === "full"
             ? `Pay ${totalCents ? formatEur(totalCents) : "in full"} today`
-            : "Pay €500 deposit today"}
+            : `Pay ${installment?.available ? formatEur(installment.todayCents) : "€500"} today`}
       </button>
 
       <p className="text-xs leading-relaxed text-[#3e3e3e]">

@@ -5,7 +5,7 @@ import { buildInstallmentPlan } from "@/lib/installments";
 import { getStripe, hasLiveStripeKeys } from "@/lib/stripe";
 import { originFromRequest } from "@/lib/site";
 import { RETREAT } from "@/lib/retreat";
-import { formatEur } from "@/lib/format";
+import { formatEur, formatLongDate } from "@/lib/format";
 import type { BookingPayload } from "@/lib/booking";
 
 export async function POST(request: Request) {
@@ -138,7 +138,7 @@ export async function POST(request: Request) {
           unit_amount: monthlyBaseCents,
           product_data: {
             name: `Monthly balance — ${productName}`,
-            description: `Automatic remaining balance until paid, ending by 28 November 2026.`,
+            description: `Same amount on this day each month. Last charge ${formatLongDate(plan.lastMonthlyIso)}. Nothing in February or later.`,
           },
         },
       },
@@ -171,6 +171,21 @@ export async function POST(request: Request) {
       });
     }
 
+    const installmentMeta = {
+      monthlyCount: String(plan.monthlyCount),
+      remainingCents: String(plan.remainingCents),
+      cancelAtUnix: String(plan.cancelAtUnix),
+      todayChargeCents: String(plan.todayCents),
+      // Next card charge is monthlyBaseCents at firstMonthlyUnix. The rounding
+      // remainder is charged today with the deposit, not on that date.
+      firstMonthlyUnix: String(plan.firstMonthlyUnix),
+      firstMonthlyIso: plan.firstMonthlyIso,
+      monthlyBaseCents: String(plan.monthlyBaseCents),
+      lastMonthlyUnix: String(plan.lastMonthlyUnix),
+      lastMonthlyIso: plan.lastMonthlyIso,
+      chargeSchedule: plan.chargeSchedule,
+    };
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       // Card only (see full-payment session above).
@@ -182,22 +197,13 @@ export async function POST(request: Request) {
       cancel_url: cancelUrl,
       metadata: {
         ...metadata,
-        monthlyCount: String(plan.monthlyCount),
-        remainingCents: String(plan.remainingCents),
-        cancelAtUnix: String(plan.cancelAtUnix),
-        // Next card charge is monthlyBaseCents at firstMonthlyUnix. The rounding
-        // remainder is charged today with the deposit, not on that date.
-        firstMonthlyUnix: String(plan.firstMonthlyUnix),
-        monthlyBaseCents: String(plan.monthlyBaseCents),
+        ...installmentMeta,
       },
       subscription_data: {
         trial_end: plan.firstMonthlyUnix,
         metadata: {
           ...metadata,
-          monthlyCount: String(plan.monthlyCount),
-          cancelAtUnix: String(plan.cancelAtUnix),
-          firstMonthlyUnix: String(plan.firstMonthlyUnix),
-          monthlyBaseCents: String(plan.monthlyBaseCents),
+          ...installmentMeta,
         },
         description: `${productName}. ${plan.summary}`,
       },

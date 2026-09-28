@@ -66,6 +66,13 @@ export function validateBooking(input: Partial<BookingPayload>): BookingValidati
       field: "acceptPolicy",
     };
   }
+  if (input.acceptTerms !== true) {
+    return {
+      ok: false,
+      error: "Please confirm you have read and agree to the terms and conditions.",
+      field: "acceptTerms",
+    };
+  }
 
   if (input.paymentPlan === "installments") {
     const plan = buildInstallmentPlan(variant.priceCents);
@@ -87,6 +94,7 @@ export function validateBooking(input: Partial<BookingPayload>): BookingValidati
       level: input.level,
       roommateNotes: input.roommateNotes?.trim() ?? "",
       acceptPolicy: true,
+      acceptTerms: true,
     },
     pkg,
     variant,

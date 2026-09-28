@@ -71,7 +71,7 @@ export const LIVE = {
   accommodationDatesLine:
     "Hotel / accommodation package: 27 January – 2 February 2027. Camp & workshops: 28 January – 1 February 2027.",
   depositLive:
-    "DEPOSIT option, pay 500 EUR upon booking and the remaining payment up to 60 days before the start of the retreat.",
+    "DEPOSIT option: €500 today, then at most 3 automatic charges on the same day of the following months. None after the same day in January 2027. If there is no charge date left, pay in full.",
   workshopsOnlyBlurb:
     "12 hours of workshops + activities. If you book this option you will have to organise your own accommodation and transfer to and from Ayara Kamala Resort & Spa for workshops.",
   deluxeOceanBlurb:

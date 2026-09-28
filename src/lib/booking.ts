@@ -11,6 +11,7 @@ export type BookingPayload = {
   level: Level;
   roommateNotes: string;
   acceptPolicy: boolean;
+  acceptTerms: boolean;
 };
 
 export type CheckoutError = {

@@ -86,11 +86,15 @@ function MockCheckoutInner() {
           <p className="pt-2 text-base font-medium">Charge today {formatEur(booking.totalCents)}</p>
         ) : plan?.available ? (
           <ol className="space-y-1 pt-2">
-            {plan.charges.map((charge) => (
+            {plan.charges.map((charge, index) => (
               <li key={charge.isoDate} className="flex justify-between">
                 <span>
-                  {charge.label === "deposit" ? "€500 deposit today" : "Monthly payment"} ·{" "}
-                  {formatShortDate(charge.isoDate)}
+                  {charge.label === "deposit"
+                    ? "Deposit today"
+                    : index === 1
+                      ? "Next card charge"
+                      : "Monthly charge"}{" "}
+                  · {formatShortDate(charge.isoDate)}
                 </span>
                 <span>{formatEur(charge.amountCents)}</span>
               </li>

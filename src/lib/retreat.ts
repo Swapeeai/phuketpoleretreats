@@ -32,7 +32,11 @@ export const RETREAT = {
   workshopsEndIso: "2027-02-01",
   checkInIso: "2027-01-27",
   checkOutIso: "2027-02-02",
-  balanceDeadlineIso: "2026-11-28",
+  /**
+   * Last calendar day an automatic charge may fall: the same day-of-month in
+   * January 2027, and never February or later. At most 3 charges follow the deposit.
+   */
+  balanceDeadlineIso: "2027-01-31",
   depositCents: 50_000,
   currency: "eur" as const,
   headlineDates: "28 January – 1 February 2027",
@@ -279,7 +283,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "How do payments work?",
-    a: "Pay in full today, or pay 500 EUR upon booking and the remaining payment in monthly instalments, finishing up to 60 days before the start of the retreat (28 November 2026). Bookings are non-refundable.",
+    a: "Pay in full today, or pay a €500 deposit today and then at most 3 automatic charges on the same day of each following month. A 22 August deposit is charged on 22 September, 22 October, and 22 November — not in December or January. Fewer charges if the January limit cuts them off: a 22 November deposit is charged on 22 December and 22 January 2027. Nothing is charged in February 2027 or later. If there is no charge date left, pay in full. The remaining balance is split across those charges, so fewer charges means a larger amount each month. Bookings are non-refundable.",
   },
   {
     q: "What should I pack?",
