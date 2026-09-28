@@ -218,59 +218,6 @@ function idempotencyKey(sessionId: string, role: "guest" | "organizer") {
   return `${safe || "stripe-session"}/${role}`;
 }
 
-const TEST_NOTIFY_FALLBACK = ["info@ibizapoleretreats.com", "jennyliebert@yahoo.com"];
-
-export type BookingEmailTestResult = {
-  ok: boolean;
-  missingKey: boolean;
-  status: number | null;
-  name: string | null;
-  message: string | null;
-  id: string | null;
-};
-
-/** Temporary diagnostic send. Same client and From as booking mail. No API key in the result. */
-export async function sendBookingNotifyTest(): Promise<BookingEmailTestResult> {
-  const empty: BookingEmailTestResult = {
-    ok: false,
-    missingKey: false,
-    status: null,
-    name: null,
-    message: null,
-    id: null,
-  };
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  if (!apiKey) {
-    console.error("[booking-email] test skipped, RESEND_API_KEY missing");
-    return { ...empty, missingKey: true, message: "RESEND_API_KEY missing" };
-  }
-
-  const configured = parseNotifyEmails(process.env.BOOKING_NOTIFY_EMAILS);
-  const to = configured.length > 0 ? configured : TEST_NOTIFY_FALLBACK;
-  const resend = new Resend(apiKey);
-  try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.BOOKING_FROM?.trim() || DEFAULT_FROM,
-      to,
-      replyTo: bookingReplyTo(),
-      subject: "Phuket Pole Retreats mail test",
-      text: "Plain booking-mail test from the production server.",
-      html: "<p>Plain booking-mail test from the production server.</p>",
-    });
-    if (error) {
-      const info = resendFailure(error);
-      console.error(`[booking-email] test failed ${describeResendError(error)}`);
-      return { ...empty, ...info };
-    }
-    console.info("[booking-email] test sent", data?.id ?? "no-id");
-    return { ...empty, ok: true, id: data?.id ?? null };
-  } catch (error) {
-    const info = resendFailure(error);
-    console.error(`[booking-email] test failed ${describeResendError(error)}`);
-    return { ...empty, ...info };
-  }
-}
-
 async function deliver(
   resend: Resend,
   input: {
