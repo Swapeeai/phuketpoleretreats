@@ -2,7 +2,7 @@ import "server-only";
 import { Resend } from "resend";
 import type Stripe from "stripe";
 import { formatEur, formatLongDate } from "@/lib/format";
-import { getPackage, RETREAT } from "@/lib/retreat";
+import { getPackage, IMG, RETREAT } from "@/lib/retreat";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 
 /**
@@ -68,6 +68,25 @@ export function guestEmailFromSession(session: BookingSession) {
   return EMAIL_RE.test(email) ? email : null;
 }
 
+const THANK_YOU = "Thank you for booking with us. We’re looking forward to hosting you.";
+const AUTO_CHARGE = `The card is charged automatically on those dates. To change a payment, contact the organiser on WhatsApp ${WHATSAPP_DISPLAY} before the charge date.`;
+const QUESTIONS = `Questions? Reply to this email or WhatsApp ${WHATSAPP_DISPLAY}.`;
+
+type Fact = { label: string; value: string };
+type ChargeRow = { label: string; date: string; amount: string };
+type MailDoc = {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  planLabel?: string;
+  planDetail?: string;
+  rows: ChargeRow[];
+  note?: string;
+  facts: Fact[];
+  reference: string;
+  closing?: string;
+};
+
 export function buildBookingEmails(session: BookingSession): BookingEmails {
   const metadata = session.metadata ?? {};
   const pkg = metadata.packageSlug ? getPackage(metadata.packageSlug) : undefined;
@@ -79,65 +98,73 @@ export function buildBookingEmails(session: BookingSession): BookingEmails {
   const includesHotel = pkg?.includesHotel === true;
   const occupancy = occupancyLabel(metadata.occupancy, includesHotel);
   const paidNow = formatMoney(session.amount_total, session.currency);
-  const currency = (session.currency || RETREAT.currency).toUpperCase();
   const isDeposit = metadata.paymentPlan === "installments";
   const schedule = isDeposit ? installmentSchedule(metadata) : null;
+  const paidOn = isoDate(metadata.paidOnIso) ?? new Date().toISOString().slice(0, 10);
+  const packageLine = occupancy ? `${packageTitle}, ${occupancy.toLowerCase()}` : packageTitle;
+  const phone = phoneLine(metadata.phone, session.customer_details?.phone);
+  const level = metadata.level?.trim() || "";
+  const rows = chargeRows(schedule);
+  const depositLine =
+    isDeposit && paidNow ? `${paidNow} deposit paid ${formatLongDate(paidOn)}` : undefined;
 
-  const guestLines = [
-    `Hello ${displayName},`,
-    isDeposit
-      ? "Your Phuket Pole Retreat booking is confirmed. This payment is the deposit taken today, not pay in full."
-      : "Your Phuket Pole Retreat booking is confirmed. This payment is pay in full.",
-    ...chargeNote(isDeposit, schedule, session.amount_total),
-    "",
-    ...detailLines({
-      guestName,
-      guestTo,
-      phone: phoneLine(metadata.phone, session.customer_details?.phone),
-      level: metadata.level?.trim() || "",
-      packageTitle,
-      occupancy,
-      paidNow,
-      currency,
-      isDeposit,
-      schedule,
-      includesHotel,
-      reference: session.id,
-    }),
-    "",
-    `Questions? Reply to this email, or message WhatsApp ${WHATSAPP_DISPLAY}.`,
-    "Phuket Pole Retreats",
-  ];
+  const stayFacts: Fact[] = [
+    { label: "Package", value: packageLine },
+    level ? { label: "Pole level", value: level } : undefined,
+    phone ? { label: "Phone", value: phone } : undefined,
+    { label: "Camp", value: RETREAT.headlineDates },
+    includesHotel ? { label: "Hotel", value: RETREAT.accommodationDates } : undefined,
+  ].filter((fact): fact is Fact => Boolean(fact));
 
-  const organizerLines = [
-    `New booking — ${subjectName} — ${packageTitle}.`,
-    isDeposit
-      ? "Plan: €500 deposit, then automatic monthly charges. This is not pay in full."
-      : "Plan: pay in full.",
-    ...chargeNote(isDeposit, schedule, session.amount_total),
-    "",
-    ...detailLines({
-      guestName,
-      guestTo,
-      phone: phoneLine(metadata.phone, session.customer_details?.phone),
-      level: metadata.level?.trim() || "",
-      packageTitle,
-      occupancy,
-      paidNow,
-      currency,
-      isDeposit,
-      schedule,
-      includesHotel,
-      reference: session.id,
-    }),
-    ...organizerOnlyLines(metadata),
-  ];
+  const guest: MailDoc = {
+    title: `Hello ${displayName}`,
+    intro: THANK_YOU,
+    planLabel: isDeposit ? undefined : "Pay in full",
+    planDetail: isDeposit ? depositLine : paidNow ? `Amount paid ${paidNow}` : undefined,
+    rows: isDeposit ? rows : [],
+    note: isDeposit && rows.length > 0 ? AUTO_CHARGE : undefined,
+    facts: stayFacts,
+    reference: session.id,
+    closing: QUESTIONS,
+  };
+
+  const organizerFacts: Fact[] = [
+    { label: "Guest", value: subjectName },
+    guestTo ? { label: "Email", value: guestTo } : undefined,
+    phone ? { label: "Phone", value: phone } : undefined,
+    level ? { label: "Pole level", value: level } : undefined,
+    { label: "Package", value: packageLine },
+    !isDeposit && paidNow ? { label: "Payment", value: `Pay in full, ${paidNow}` } : undefined,
+    metadata.instagram?.trim() ? { label: "Instagram", value: oneLine(metadata.instagram) } : undefined,
+    metadata.roommateNotes?.trim()
+      ? { label: "Roommate note", value: oneLine(metadata.roommateNotes) }
+      : undefined,
+  ].filter((fact): fact is Fact => Boolean(fact));
+
+  const organizer: MailDoc = {
+    eyebrow: "New booking",
+    title: subjectName,
+    planDetail: isDeposit ? depositLine : undefined,
+    rows: isDeposit ? rows : [],
+    note: isDeposit && rows.length > 0 ? AUTO_CHARGE : undefined,
+    facts: organizerFacts,
+    reference: session.id,
+  };
 
   return {
     guestTo,
-    guest: render(GUEST_SUBJECT, guestLines),
-    organizer: render(`New booking — ${subjectName} — ${oneLine(packageTitle)}`, organizerLines),
+    guest: renderMail(GUEST_SUBJECT, guest),
+    organizer: renderMail(`New booking — ${subjectName} — ${oneLine(packageTitle)}`, organizer),
   };
+}
+
+function chargeRows(schedule: Schedule | null): ChargeRow[] {
+  if (!schedule?.charges?.length) return [];
+  return schedule.charges.map((charge, index) => ({
+    label: index === 0 ? "Next card charge" : "",
+    date: formatLongDate(charge.iso),
+    amount: formatEur(charge.cents),
+  }));
 }
 
 export async function sendBookingConfirmations(session: Stripe.Checkout.Session) {
@@ -315,8 +342,6 @@ type Schedule = {
   charges: { iso: string; cents: number }[] | null;
 };
 
-const CHANGE_BEFORE_CHARGE = `If you need a change, contact the organiser on WhatsApp ${WHATSAPP_DISPLAY} before the charge date. Otherwise the card is charged automatically.`;
-
 function isoDate(value: string | undefined) {
   return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
 }
@@ -371,136 +396,6 @@ function installmentSchedule(metadata: Record<string, string>): Schedule | null 
   };
 }
 
-function joinDates(dates: string[]) {
-  if (dates.length <= 1) return dates[0] ?? "";
-  if (dates.length === 2) return `${dates[0]} and ${dates[1]}`;
-  return `${dates.slice(0, -1).join(", ")}, and ${dates[dates.length - 1]}`;
-}
-
-function monthlyFollowSentence(count: number) {
-  if (count === 1) {
-    return "1 monthly charge follows. It is automatic on the same card until the balance is paid.";
-  }
-  return `${count} monthly charges follow. They are automatic on the same card until the balance is paid.`;
-}
-
-function chargeNote(isDeposit: boolean, schedule: Schedule | null, amountTotal: number | null) {
-  if (!isDeposit) return [];
-  const lines: string[] = [];
-  const hasNextCharge = Boolean(schedule?.nextChargeIso && schedule.nextChargeCents);
-  if (!hasNextCharge) {
-    lines.push("The card will be charged automatically until the balance is paid.");
-  }
-  if (schedule && amountTotal != null && amountTotal !== schedule.expectedTodayCents) {
-    lines.push("The amount paid now is what Stripe collected today.");
-  }
-  return lines;
-}
-
-function detailLines(input: {
-  guestName: string;
-  guestTo: string | null;
-  phone: string;
-  level: string;
-  packageTitle: string;
-  occupancy: string | null;
-  paidNow: string | null;
-  currency: string;
-  isDeposit: boolean;
-  schedule: Schedule | null;
-  includesHotel: boolean;
-  reference: string;
-}) {
-  const lines = [
-    input.guestName ? `Guest: ${input.guestName}` : "",
-    input.guestTo ? `Email: ${input.guestTo}` : "",
-    input.phone ? `Phone / WhatsApp: ${input.phone}` : "",
-    input.level ? `Pole level: ${input.level}` : "",
-    `Package: ${input.packageTitle}`,
-    input.occupancy ? `Occupancy: ${input.occupancy}` : "",
-    input.paidNow
-      ? input.isDeposit
-        ? `Amount taken today: ${input.paidNow}.`
-        : `Amount paid now: ${input.paidNow}`
-      : "",
-    `Currency: ${input.currency === "EUR" ? "EUR" : input.currency}`,
-    `Payment: ${input.isDeposit ? "€500 deposit, then automatic monthly charges" : "Pay in full"}`,
-  ];
-
-  if (input.isDeposit && input.schedule) {
-    const nextIso = input.schedule.nextChargeIso;
-    const nextCents = input.schedule.nextChargeCents;
-    const lastIso = input.schedule.lastChargeIso;
-    const storedCharges = input.schedule.charges;
-    if (storedCharges && storedCharges.length > 0 && nextIso && nextCents) {
-      // Dates and amounts come from the Checkout Session. The cent adjustment
-      // was collected today and is not part of these charges.
-      lines.push(
-        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
-      );
-      const sameAmount = storedCharges.every((charge) => charge.cents === storedCharges[0].cents);
-      if (sameAmount) {
-        lines.push(
-          `The same amount is taken on ${joinDates(storedCharges.map((charge) => formatLongDate(charge.iso)))}.`,
-        );
-      }
-      for (const charge of storedCharges) {
-        lines.push(`${formatLongDate(charge.iso)}: ${formatEur(charge.cents)}`);
-      }
-      lines.push(CHANGE_BEFORE_CHARGE);
-    } else if (nextIso && nextCents && lastIso) {
-      lines.push(
-        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
-      );
-      lines.push(
-        `The same amount is taken on that day each month through ${formatLongDate(lastIso)}.`,
-      );
-      lines.push(CHANGE_BEFORE_CHARGE);
-    } else if (nextIso && nextCents) {
-      lines.push(
-        `Next charge on the card: ${formatEur(nextCents)} on ${formatLongDate(nextIso)}, UTC.`,
-      );
-      lines.push(monthlyFollowSentence(input.schedule.monthlyCount));
-      lines.push(CHANGE_BEFORE_CHARGE);
-    } else {
-      if (
-        input.paidNow &&
-        input.schedule.adjustmentCents > 0 &&
-        input.paidNow === formatMoney(input.schedule.expectedTodayCents, "eur")
-      ) {
-        lines.push(
-          `Deposit paid: ${formatEur(RETREAT.depositCents)} plus ${formatEur(input.schedule.adjustmentCents)} so the total matches the package price`,
-        );
-      } else if (input.paidNow) {
-        lines.push(`Deposit paid: ${input.paidNow}`);
-      }
-      if (input.schedule.monthlyBaseCents > 0) {
-        lines.push(`Monthly amount: ${formatEur(input.schedule.monthlyBaseCents)}`);
-      }
-      lines.push(`Remaining charges: ${input.schedule.monthlyCount}`);
-      lines.push(CHANGE_BEFORE_CHARGE);
-    }
-  }
-
-  lines.push(`Camp and workshops: ${RETREAT.headlineDates}`);
-  if (input.includesHotel) {
-    lines.push(`Hotel stay: ${RETREAT.accommodationDates}`);
-  } else {
-    lines.push("Hotel nights are not included.");
-  }
-  lines.push(`Booking reference: ${input.reference}`);
-  return lines.filter(Boolean);
-}
-
-function organizerOnlyLines(metadata: Record<string, string>) {
-  const lines: string[] = [];
-  const instagram = metadata.instagram?.trim();
-  const roommate = metadata.roommateNotes?.trim();
-  if (instagram) lines.push(`Instagram: ${oneLine(instagram)}`);
-  if (roommate) lines.push(`Roommate notes: ${roommate}`);
-  return lines;
-}
-
 function occupancyLabel(value: string | undefined, includesHotel: boolean) {
   if (!includesHotel) return null;
   if (value === "shared") return "Shared";
@@ -533,19 +428,63 @@ function oneLine(value: string) {
   return value.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function render(subject: string, lines: string[]): RenderedEmail {
-  const text = lines
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-  const paragraphs = text.split(/\n{2,}/);
-  const html = `<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#faf8f3;color:#243832;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.5;">${paragraphs
-    .map(
-      (paragraph) =>
-        `<p style="margin:0 0 16px;">${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`,
-    )
-    .join("")}</body></html>`;
+function renderMail(subject: string, doc: MailDoc): RenderedEmail {
+  const text = mailText(doc);
+  const html = mailHtml(doc);
   return { subject: oneLine(subject), html, text };
+}
+
+function mailText(doc: MailDoc) {
+  const lines = [
+    doc.eyebrow,
+    doc.title,
+    doc.intro,
+    doc.planLabel,
+    doc.planDetail,
+    ...doc.rows.map((row) => [row.label, row.date, row.amount].filter(Boolean).join(" — ")),
+    doc.note,
+    ...doc.facts.map((fact) => `${fact.label}: ${fact.value}`),
+    `Reference ${doc.reference}`,
+    doc.closing,
+  ].filter((line): line is string => Boolean(line && line.trim()));
+  return lines.join("\n");
+}
+
+function mailHtml(doc: MailDoc) {
+  const font = "Georgia,'Iowan Old Style','Palatino Linotype',Palatino,serif";
+  const sans = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+  const facts = doc.facts
+    .map(
+      (fact, index) =>
+        `<tr><td style="padding:8px 16px 8px 0;font-family:${sans};font-size:13px;line-height:1.3;color:#5e6f68;vertical-align:top;width:108px;${index ? "border-top:1px solid #e6dfd2;" : ""}">${escapeHtml(fact.label)}</td><td style="padding:8px 0;font-family:${sans};font-size:15px;line-height:1.35;color:#243832;vertical-align:top;${index ? "border-top:1px solid #e6dfd2;" : ""}">${escapeHtml(fact.value)}</td></tr>`,
+    )
+    .join("");
+  const rows = doc.rows
+    .map(
+      (row) =>
+        `<tr><td style="padding:7px 10px 7px 0;font-family:${sans};font-size:13px;line-height:1.3;color:#1b7f78;vertical-align:baseline;width:132px;">${escapeHtml(row.label)}</td><td style="padding:7px 10px 7px 0;font-family:${sans};font-size:15px;line-height:1.3;color:#243832;vertical-align:baseline;">${escapeHtml(row.date)}</td><td align="right" style="padding:7px 0;font-family:${sans};font-size:15px;line-height:1.3;color:#243832;font-weight:600;vertical-align:baseline;white-space:nowrap;">${escapeHtml(row.amount)}</td></tr>`,
+    )
+    .join("");
+  const plan = doc.planLabel || doc.planDetail
+    ? `<tr><td style="padding:4px 28px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf6ee;"><tr><td style="padding:14px 16px;font-family:${sans};">${doc.planLabel ? `<div style="font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#1b7f78;">${escapeHtml(doc.planLabel)}</div>` : ""}${doc.planDetail ? `<div style="margin-top:${doc.planLabel ? "4px" : "0"};font-family:${font};font-size:22px;line-height:1.25;color:#243832;">${escapeHtml(doc.planDetail)}</div>` : ""}</td></tr></table></td></tr>`
+    : "";
+  const schedule = rows
+    ? `<tr><td style="padding:14px 28px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table></td></tr>`
+    : "";
+  const note = doc.note
+    ? `<tr><td style="padding:12px 28px 0;font-family:${sans};font-size:14px;line-height:1.45;color:#243832;">${escapeHtml(doc.note)}</td></tr>`
+    : "";
+  const intro = doc.intro
+    ? `<tr><td style="padding:8px 28px 0;font-family:${sans};font-size:16px;line-height:1.45;color:#243832;">${escapeHtml(doc.intro)}</td></tr>`
+    : "";
+  const eyebrow = doc.eyebrow
+    ? `<div style="font-family:${sans};font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#1b7f78;">${escapeHtml(doc.eyebrow)}</div>`
+    : "";
+  const closing = doc.closing
+    ? `<tr><td style="padding:16px 28px 0;font-family:${sans};font-size:14px;line-height:1.45;color:#243832;">${escapeHtml(doc.closing)}</td></tr>`
+    : "";
+
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#faf8f3;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf8f3;"><tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;background:#ffffff;"><tr><td style="height:4px;background:#1b7f78;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td style="padding:18px 28px 0;text-align:left;"><img src="${escapeHtml(IMG.logo)}" width="72" height="72" alt="Phuket Pole Retreats" style="display:block;width:72px;height:72px;border:0;"></td></tr><tr><td style="padding:14px 28px 0;">${eyebrow}<div style="margin-top:${doc.eyebrow ? "4px" : "0"};font-family:${font};font-size:28px;line-height:1.15;color:#243832;">${escapeHtml(doc.title)}</div></td></tr>${intro}${plan}${schedule}${note}<tr><td style="padding:16px 28px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${facts}</table></td></tr><tr><td style="padding:14px 28px 0;font-family:${sans};font-size:12px;line-height:1.4;color:#7b8781;">Reference ${escapeHtml(doc.reference)}</td></tr>${closing}<tr><td style="padding:18px 28px 22px;font-family:${sans};font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#1b7f78;">Phuket Pole Retreats</td></tr></table></td></tr></table></body></html>`;
 }
 
 function escapeHtml(value: string) {
