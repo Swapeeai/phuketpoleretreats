@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ScenicBand } from "@/components/scenic";
 import { WorkshopTimetable } from "@/components/workshop-timetable";
-import { SCENERY } from "@/lib/images";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -15,7 +14,10 @@ export const metadata: Metadata = pageMetadata({
 export default function TimetablePage() {
   return (
     <>
-      <ScenicBand src={SCENERY.emeraldWater.src} alt={SCENERY.emeraldWater.alt} />
+      <ScenicBand
+        src="/images/phuket/timetable-longtails.jpg"
+        alt="Two wooden longtail boats on turquoise water beside limestone karsts"
+      />
       <div className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
         <Breadcrumbs
           items={[
