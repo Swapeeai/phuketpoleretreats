@@ -35,7 +35,7 @@ export type TimetableDay = {
 
 export const TIMETABLE_META = {
   eyebrow: "Pole Art Retreat 2027",
-  title: "Workshop Timetable",
+  title: "Timetable & workshops",
   workshopsLine: "Workshops 28 January–1 February 2027",
   accommodationLine: "Accommodation package 27 January–2 February 2027",
   facts: [

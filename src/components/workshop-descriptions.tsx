@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { WORKSHOP_INSTRUCTORS, WORKSHOP_INTRO } from "@/lib/workshop-descriptions";
 
+const introClassName =
+  "mx-auto max-w-3xl border-t border-border pt-8 text-center font-heading text-2xl leading-snug text-foreground sm:text-3xl";
+
 export function WorkshopIntroLead() {
   return (
-    <div className="mx-auto max-w-2xl text-center">
-      <p className="text-base leading-relaxed text-foreground">{WORKSHOP_INTRO}</p>
+    <div className="text-center">
+      <p className={introClassName}>{WORKSHOP_INTRO}</p>
       <Link
         href="/timetable#workshops"
-        className="mt-4 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
+        className="mt-5 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
       >
         See the workshop descriptions
       </Link>
@@ -18,8 +21,9 @@ export function WorkshopIntroLead() {
 export function WorkshopDescriptions() {
   return (
     <div id="workshops">
-      <p className="mx-auto max-w-2xl text-center text-base leading-relaxed text-foreground">{WORKSHOP_INTRO}</p>
-      <div className="mt-12 space-y-14">
+      <p className={introClassName}>{WORKSHOP_INTRO}</p>
+      <h2 className="mt-8 text-center text-2xl sm:text-3xl">Workshops descriptions</h2>
+      <div className="mt-10 space-y-14">
         {WORKSHOP_INSTRUCTORS.map((instructor) => (
           <section key={instructor.name}>
             <h2 className="text-3xl sm:text-4xl">{instructor.name}</h2>
