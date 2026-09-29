@@ -7,6 +7,7 @@ import { InstagramGallery } from "@/components/instagram-gallery";
 import { JsonLd } from "@/components/json-ld";
 import { ScenicBand, ScenicSection } from "@/components/scenic";
 import { buttonVariants } from "@/components/ui/button";
+import { WorkshopIntroLead } from "@/components/workshop-descriptions";
 import { WorkshopTimetable } from "@/components/workshop-timetable";
 import { LIVE, LIVE_PACKAGE_BLURB, LIVE_PACKAGE_ORDER } from "@/lib/live-copy";
 import { formatEur } from "@/lib/format";
@@ -124,7 +125,7 @@ export default function HomePage() {
         </div>
       </ScenicSection>
 
-      <WorkshopTimetable />
+      <WorkshopTimetable below={<WorkshopIntroLead />} />
 
       <section className="bg-background pb-24 pt-0 sm:pb-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ScenicBand } from "@/components/scenic";
+import { WorkshopDescriptions } from "@/components/workshop-descriptions";
 import { WorkshopTimetable } from "@/components/workshop-timetable";
 import { pageMetadata } from "@/lib/seo";
 
@@ -26,7 +27,7 @@ export default function TimetablePage() {
           ]}
         />
       </div>
-      <WorkshopTimetable heading="h1" />
+      <WorkshopTimetable heading="h1" below={<WorkshopDescriptions />} />
     </>
   );
 }

@@ -1,9 +1,16 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { LIVE } from "@/lib/live-copy";
 import { TIMETABLE } from "@/lib/images";
 import { TIMETABLE_DAYS, TIMETABLE_META } from "@/lib/timetable";
 
-export function WorkshopTimetable({ heading = "h2" }: { heading?: "h1" | "h2" }) {
+export function WorkshopTimetable({
+  heading = "h2",
+  below,
+}: {
+  heading?: "h1" | "h2";
+  below?: ReactNode;
+}) {
   const Title = heading;
   return (
     <section id="timetable" className="bg-sand py-24 sm:py-28">
@@ -54,6 +61,7 @@ export function WorkshopTimetable({ heading = "h2" }: { heading?: "h1" | "h2" })
             </li>
           ))}
         </ul>
+        {below ? <div className="mt-14">{below}</div> : null}
       </div>
     </section>
   );
