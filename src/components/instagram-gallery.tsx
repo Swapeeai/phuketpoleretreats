@@ -4,7 +4,7 @@ import { INSTAGRAM_GALLERY } from "@/lib/images";
 
 export function InstagramGallery() {
   return (
-    <section id="instagram" className="bg-sky py-24 sm:py-28">
+    <section id="instagram" className="bg-sky pb-24 pt-0 sm:pb-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

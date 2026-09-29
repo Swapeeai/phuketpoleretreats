@@ -126,7 +126,7 @@ export default function HomePage() {
 
       <WorkshopTimetable />
 
-      <section className="bg-background py-24 sm:py-28">
+      <section className="bg-background pb-24 pt-0 sm:pb-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="text-4xl sm:text-5xl">Packages</h2>
         <div className="mt-10 grid gap-8 md:grid-cols-2">
