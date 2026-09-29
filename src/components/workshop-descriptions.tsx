@@ -3,11 +3,11 @@ import { WORKSHOP_INSTRUCTORS, WORKSHOP_INTRO } from "@/lib/workshop-description
 
 function WorkshopIntroBlock() {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-6">
-      <p className="shrink-0 font-heading text-4xl leading-none tracking-[0.08em] text-primary sm:pt-1 sm:text-5xl">
+    <div className="flex flex-col gap-3">
+      <p className="font-heading text-4xl leading-none tracking-[0.08em] text-primary sm:text-5xl">
         WORKSHOPS
       </p>
-      <p className="border border-primary bg-white px-4 py-3 text-sm leading-snug text-foreground sm:flex-1">
+      <p className="border border-primary bg-white px-4 py-3 text-sm leading-snug text-foreground">
         “{WORKSHOP_INTRO}”
       </p>
     </div>
@@ -32,7 +32,6 @@ export function WorkshopDescriptions() {
   return (
     <div id="workshops">
       <WorkshopIntroBlock />
-      <h2 className="mt-6 text-lg sm:text-xl">Workshops descriptions</h2>
       <div className="mt-8 space-y-14">
         {WORKSHOP_INSTRUCTORS.map((instructor) => (
           <section key={instructor.name}>
